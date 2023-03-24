@@ -13,7 +13,7 @@ class Customers {
       return this.customers.find((customer) => customer.email === email);
     }
   
-    getById(id: number): CustomerT | undefined {
+    getById(id: string): CustomerT | undefined {
       return this.customers.find((customer) => customer.id === id);
     }
   

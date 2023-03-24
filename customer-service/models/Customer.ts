@@ -1,5 +1,5 @@
 export type CustomerT = {
-    id: number;
+    id: string;
 
     email: string;
     password: string;
