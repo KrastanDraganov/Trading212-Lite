@@ -32,3 +32,5 @@ class Customers
       return customer;
     }
   }
+
+  export default new Customers();
