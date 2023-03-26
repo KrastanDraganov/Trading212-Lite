@@ -1,4 +1,5 @@
-export type CountryT = {
+export type CountryT = 
+{
     code: string;
     support: "full" | "none" | "coming-soon";
 };

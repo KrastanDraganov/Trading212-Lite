@@ -1,6 +1,7 @@
 import { CountryT } from "../models/Country";
 
-export const Countries: CountryT[] = [
+export const Countries: CountryT[] = 
+[
   {
     code: "AF",
     support: "none",
