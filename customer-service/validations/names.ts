@@ -1,4 +1,4 @@
-const containsOnlyLatinCharactersRegex = new RegExp("[a-z ,.'-]");
+const containsOnlyLatinCharactersRegex = new RegExp("^[a-z ,.'-]+$");
 
 export function containsOnlyLatinCharacters(value: string): boolean 
 {
