@@ -1,36 +1,83 @@
 import { CustomerT } from "../models/Customer";
+import fs from "fs";
 
-class Customers 
+interface CustomersRepository
+{
+  init(): Promise<void>;
+  
+  fetchAll(): Promise<CustomerT[]>;
+  
+  findByEmail(email: string): Promise<CustomerT | undefined>;
+  
+  findById(id: string): Promise<CustomerT | undefined>;
+  
+  add(customer: CustomerT): Promise<CustomerT>; 
+}
+
+class CustomersFileRepository implements CustomersRepository
 {
     private customers: CustomerT[] = [];
+    private fileParentFolder: string = "./fake-db";
+    private fileLocation: string = this.fileParentFolder + "/customers-db.json";
   
-    init() {}
-  
-    getAll(): CustomerT[] 
+    async init() 
     {
-      return this.customers;
+      try
+      {
+        if (!fs.existsSync(this.fileLocation))
+        {
+          fs.mkdirSync(this.fileParentFolder, {
+            recursive: true
+          });
+
+          fs.writeFileSync(this.fileLocation, "[]");
+        }
+
+        const rawCustomers = fs.readFileSync(
+          this.fileLocation,
+          "utf8"
+        );
+        this.customers = JSON.parse(rawCustomers);
+      }
+      catch(err)
+      {
+        console.log(err);
+
+        this.customers = [];
+      };
     }
   
-    getByEmail(email: string): CustomerT | undefined 
+    fetchAll(): Promise<CustomerT[]> 
     {
-      return this.customers.find((customer) => customer.email === email);
+      return Promise.resolve(this.customers);
     }
   
-    getById(id: string): CustomerT | undefined 
+    findByEmail(email: string): Promise<CustomerT | undefined> 
     {
-      return this.customers.find((customer) => customer.id === id);
+      return Promise.resolve(this.customers.find((customer) => customer.email === email));
     }
   
-    add(customer: CustomerT): CustomerT 
+    findById(id: string): Promise<CustomerT | undefined> 
     {
-      if (this.getById(customer.id)) {
-        throw new Error(`Existing customer ID ${customer.id}`);
+      return Promise.resolve(this.customers.find((customer) => customer.id === id));
+    }
+  
+    async add(newCustomer: CustomerT): Promise<CustomerT> 
+    {
+      const existingCustomer = await this.findById(newCustomer.id);
+      if (existingCustomer) {
+        throw new Error(`Existing customer ID ${newCustomer.id}`);
       }
   
-      this.customers.push(customer);
-  
-      return customer;
+      this.customers.push(newCustomer);
+
+      fs.writeFileSync(
+        this.fileLocation,
+        JSON.stringify(this.customers)
+      );
+
+      return newCustomer;
     }
   }
 
-  export default new Customers();
+  export default new CustomersFileRepository();
