@@ -17,7 +17,8 @@ CustomersFileRepository.init();
 
 const sessionConfiguration = {
   secret: "onlyCSKA",
-  saveUninitialized: true
+  saveUninitialized: true,
+  resave: true
 };
 
 declare module "express-session" {
