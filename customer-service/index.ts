@@ -13,25 +13,29 @@ import { CustomerT } from './models/Customer';
 const app: Express = express();
 const port = 8081;
 
-CustomersFileRepository.init();
-
-const sessionConfiguration = {
+const sessionConfiguration = 
+{
   secret: "onlyCSKA",
   saveUninitialized: true,
   resave: true
 };
 
-declare module "express-session" {
-  interface SessionData {
+declare module "express-session" 
+{
+  interface SessionData 
+  {
     isAuthenticated: boolean;
   }
 }
+
+CustomersFileRepository.init();
 
 app.use(express.json());
 app.use(session(sessionConfiguration));
 
 app.get("/", (req: Request, res: Response) => 
 {
+  // TO DO - Fix Redirect
   res.status(400).send(":|");
 });
 
@@ -177,7 +181,7 @@ app.post("/login", async (req: Request, res: Response) =>
 
   if (!arePasswordsSame)
   {
-    return res.status(400).json({ type: "PasswordsDoNotMatch "});
+    return res.status(400).json({ type: "IncorrectPassword" });
   }
 
   req.session.isAuthenticated = true;
