@@ -3,7 +3,9 @@ import {StyleProp, View, ViewStyle, TextInput, Text, StyleSheet, TextStyle} from
 
 const containerHeight = 70;
 const textInputHeight = 35;
-const labelMargin = -20;
+const labelFontSize = 12;
+const labelFocusedMargin = -5;
+const labelBlurredMargin = -20;
 const accentColor = "#747980";
 
 export function CustomTextInput(props: 
@@ -11,9 +13,34 @@ export function CustomTextInput(props:
       label: string,
       style?: StyleProp<ViewStyle>,
       textInputProps?: Omit<React.ComponentProps<typeof TextInput>, "onChangeText">,
-      onChangeText: (text: string) => void,
+      onChangeTextProp: (text: string) => void,
     })
 {
+    const [isFocused, setIsFocused] = useState(false);
+    const [text, setText] = useState("");
+    
+    const onFocus = useCallback(() =>
+        {
+            setIsFocused(true);
+        },
+        []
+    );
+
+    const onBlur = useCallback(() =>
+        {
+            setIsFocused(false);
+        },
+        []
+    );
+
+    const onChangeText = useCallback((text: string) =>
+        {
+            props.onChangeTextProp(text);
+            setText(text);
+        },
+        []
+    );
+
     const containerStyle = useMemo((): StyleProp<ViewStyle> => 
         [
             {
@@ -35,11 +62,11 @@ export function CustomTextInput(props:
 
     const labelStyle = useMemo((): StyleProp<TextStyle> =>
         ({
-            marginBottom: labelMargin,
+            marginBottom: (isFocused || text.length > 0) ? labelFocusedMargin : labelBlurredMargin,
             color: accentColor,
-            fontSize: 12,
+            fontSize: labelFontSize,
         }),
-        []
+        [isFocused, text]
     );
 
     const blackLineStyle = useMemo(() =>
@@ -49,35 +76,17 @@ export function CustomTextInput(props:
         }),
         []
     );
-    
-    const [isFocused, setIsFocused] = useState(false);
-    
-    const onFocus = useCallback(() =>
-        {
-            setIsFocused(true);
-        },
-        []
-    );
-
-    const onBlur = useCallback(() =>
-        {
-            setIsFocused(false);
-        },
-        []
-    );
 
     return (
         <View style={containerStyle}>
-            {isFocused ? null : (
-                <Text style={labelStyle}>{props.label}</Text>
-            )}
+            <Text style={labelStyle}>{props.label}</Text>
 
             <TextInput
                 {...props.textInputProps}
                 style={textInputStyle}
                 onFocus={onFocus}
                 onBlur={onBlur}
-                onChangeText={props.onChangeText}
+                onChangeText={onChangeText}
             />
 
             <View style={blackLineStyle} />

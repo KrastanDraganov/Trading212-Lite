@@ -19,7 +19,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
         <View>
             <CustomTextInput
                 label="GIVEN NAMES"
-                onChangeText={(text) =>
+                onChangeTextProp={(text) =>
                 {
                     setGivenNames(text);
                 }}
@@ -36,7 +36,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
 
             <CustomTextInput 
                 label="LAST NAME"
-                onChangeText={(text) =>
+                onChangeTextProp={(text) =>
                 {
                     setLastName(text);
                 }}
@@ -72,7 +72,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void })
         <View>
             <CustomTextInput
                 label="EMAIL"
-                onChangeText={(text) =>
+                onChangeTextProp={(text) =>
                 {
                     setEmail(text);
                 }}
@@ -88,7 +88,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void })
             
             <CustomTextInput
                 label="PASSWORD"
-                onChangeText={(text) =>
+                onChangeTextProp={(text) =>
                 {
                     setPassword(text);
                 }}
