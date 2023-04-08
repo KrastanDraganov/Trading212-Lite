@@ -1,11 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
-import {StyleProp, View, ViewStyle, TextInput, Text, StyleSheet, TextStyle} from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {StyleProp, View, ViewStyle, TextInput, Text, StyleSheet, TextStyle, Animated, Easing} from "react-native";
 
 const containerHeight = 70;
 const textInputHeight = 35;
+
 const labelFontSize = 12;
 const labelFocusedMargin = -5;
 const labelBlurredMargin = -20;
+const labelAnimationBottomToTop = 1;
+const labelAnimationTopToBottom = 0;
+
 const accentColor = "#747980";
 
 export function CustomTextInput(props: 
@@ -16,12 +20,44 @@ export function CustomTextInput(props:
       onChangeTextProp: (text: string) => void,
     })
 {
+    const labelAnimationValue = useRef(new Animated.Value(0)).current;
+    const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
+
+    useEffect(() => 
+        {
+            return () =>
+            {
+                cancelLabelAnimation.current?.();
+            }
+        },
+        []
+    );
+
+    const performLabelAnimation = useCallback((endValue: (0 | 1)) =>
+        {
+            const animation = Animated.timing(labelAnimationValue, 
+                {
+                    toValue: endValue,
+                    duration: 100,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                }
+            );
+
+            cancelLabelAnimation.current = animation.stop;
+
+            animation.start();
+        },
+        []
+    );
+
     const [isFocused, setIsFocused] = useState(false);
     const [text, setText] = useState("");
     
     const onFocus = useCallback(() =>
         {
             setIsFocused(true);
+            performLabelAnimation(labelAnimationBottomToTop);
         },
         []
     );
@@ -29,8 +65,12 @@ export function CustomTextInput(props:
     const onBlur = useCallback(() =>
         {
             setIsFocused(false);
+            if (text.length === 0)
+            {
+                performLabelAnimation(labelAnimationTopToBottom);
+            }
         },
-        []
+        [text]
     );
 
     const onChangeText = useCallback((text: string) =>
@@ -41,7 +81,7 @@ export function CustomTextInput(props:
         []
     );
 
-    const containerStyle = useMemo((): StyleProp<ViewStyle> => 
+    const containerStyle = useMemo((): StyleProp<ViewStyle> =>
         [
             {
                 height: containerHeight,
@@ -60,13 +100,18 @@ export function CustomTextInput(props:
         []
     );
 
-    const labelStyle = useMemo((): StyleProp<TextStyle> =>
+    const labelStyle = useMemo((): ((StyleProp<TextStyle>) | Animated.Animated) =>
         ({
-            marginBottom: (isFocused || text.length > 0) ? labelFocusedMargin : labelBlurredMargin,
+            marginBottom: labelAnimationValue.interpolate(
+                {
+                    inputRange: [0, 1],
+                    outputRange: [labelBlurredMargin, labelFocusedMargin],
+                }
+            ),
             color: accentColor,
             fontSize: labelFontSize,
         }),
-        [isFocused, text]
+        []
     );
 
     const blackLineStyle = useMemo(() =>
@@ -79,7 +124,7 @@ export function CustomTextInput(props:
 
     return (
         <View style={containerStyle}>
-            <Text style={labelStyle}>{props.label}</Text>
+            <Animated.Text style={labelStyle}>{props.label}</Animated.Text>
 
             <TextInput
                 {...props.textInputProps}
