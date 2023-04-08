@@ -3,6 +3,9 @@ import { Button, Pressable, Text, TextInput, View } from "react-native";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 import { CustomTextInput } from "./CustomTextInput";
 
+const marginAboveTextInput = 10;
+const marginAboveButton = 20;
+
 function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
 {
     const onPress = useCallback(() =>
@@ -30,7 +33,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
                 }}
                 style=
                 {{
-                    marginBottom: 10,
+                    marginBottom: marginAboveTextInput,
                 }}
             />
 
@@ -47,7 +50,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
                 }}
                 style=
                 {{
-                    marginBottom: 30,
+                    marginBottom: marginAboveButton,
                 }}
             />
 
@@ -82,7 +85,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void })
                 }}
                 style=
                 {{
-                    marginBottom: 10,
+                    marginBottom: marginAboveTextInput,
                 }}
             />
             
@@ -99,7 +102,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void })
                 }}
                 style=
                 {{
-                    marginBottom: 30,
+                    marginBottom: marginAboveButton,
                 }}
             />
 

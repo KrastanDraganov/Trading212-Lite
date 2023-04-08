@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {StyleProp, View, ViewStyle, TextInput, Text, StyleSheet, TextStyle, Animated, Easing} from "react-native";
 
 const containerHeight = 70;
-const textInputHeight = 35;
+const textInputHeight = 45;
+const textInputFontSize = 17;
 
 const labelFontSize = 12;
 const labelFocusedMargin = -5;
@@ -96,6 +97,7 @@ export function CustomTextInput(props:
         ({
             height: textInputHeight,
             outlineStyle: "none",
+            fontSize: textInputFontSize,
         }),
         []
     );
