@@ -3,7 +3,7 @@ import { Countries } from './repositories/Countries';
 import { isValidishEmail } from './validations/email';
 import { containsOnlyLatinCharacters } from './validations/names';
 import CustomersFileRepository from './repositories/Customers';
-import { CountryT } from './models/Country';
+import { CountryT } from "customer-commons";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 import { isPasswordSecure } from './validations/password';

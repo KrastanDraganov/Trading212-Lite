@@ -1,4 +1,4 @@
-import { CountryT } from "../models/Country";
+import { CountryT } from "customer-commons";
 
 export const Countries: CountryT[] = 
 [
