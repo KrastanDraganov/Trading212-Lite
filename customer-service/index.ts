@@ -41,7 +41,7 @@ app.get("/", (req: Request, res: Response) =>
 
 app.get("/countries", (req: Request, res: Response) =>
 {
-  res.json(Countries);
+  res.header("Access-Control-Allow-Origin", "*").json(Countries);
 });
 
 app.post("/customers", async (req: Request, res: Response) => 
