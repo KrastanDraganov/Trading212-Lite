@@ -1,13 +1,35 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Pressable, Text, TextInput, View } from "react-native";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 import { CustomTextInput } from "./CustomTextInput";
+import { AppConfiguration } from "../config";
+import { CountriesDropdown } from "./CountriesDropdown";
 
 const marginAboveTextInput = 10;
 const marginAboveButton = 20;
 
 function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
 {
+    const [countries, setCountries] = useState([]);
+
+    const fetchCountries = useCallback(async () =>
+        {
+            const response = await fetch(`${AppConfiguration.CUSTOMER_SERVICE_URL}/countries`);
+
+            const countries = await response.json();
+
+            setCountries(countries);
+        },
+        []
+    );
+
+    useEffect(() => 
+        {
+            fetchCountries();
+        },
+        []
+    );
+
     const onPress = useCallback(() =>
         {
             props.onNextPress();
@@ -20,6 +42,8 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
 
     return (
         <View>
+            <CountriesDropdown countries={countries} />
+
             <CustomTextInput
                 label="GIVEN NAMES"
                 onChangeTextProp={(text) =>
@@ -54,7 +78,9 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void })
                 }}
             />
 
-            <Button title="Next" onPress={onPress} />
+            <View>
+                <Button title="Next" onPress={onPress}/>
+            </View>
         </View>
     );
 }

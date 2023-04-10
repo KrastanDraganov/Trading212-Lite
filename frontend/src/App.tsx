@@ -6,7 +6,7 @@ export default function App() {
     <View style={styles.container}>
       <SignUpFlow />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -15,4 +15,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-})
+});
