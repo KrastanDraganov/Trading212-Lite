@@ -1,9 +1,7 @@
-type FlowT = 
-{
-    maxSteps: number,
+type FlowT = {
+  maxSteps: number;
 };
 
-export const SignUpFlowConfiguration : FlowT = 
-{
-    maxSteps: 2,
+export const SignUpFlowConfiguration: FlowT = {
+  maxSteps: 2,
 };

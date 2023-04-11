@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native"
-import { SignUpFlow } from "./sign-up/SignUpFlow"
+import { StyleSheet, View } from "react-native";
+import { SignUpFlow } from "./sign-up/SignUpFlow";
 
 export default function App() {
   return (
