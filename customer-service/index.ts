@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { CustomerT } from "./models/Customer";
 import { Countries } from "./repositories/Countries";
 import CustomersFileRepository from "./repositories/Customers";
-import { isValidishEmail } from "./validations/email";
+import { isValidEmail } from "./validations/email";
 import { containsOnlyLatinCharacters } from "./validations/names";
 import { isPasswordSecure } from "./validations/password";
 
@@ -49,6 +49,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 	if (!givenNames) {
 		return res.status(400).json({ type: "MissingGivenNames" });
 	}
+
 	if (!containsOnlyLatinCharacters(givenNames)) {
 		return res.status(400).json({ type: "InvalidGivenNames" });
 	}
@@ -58,6 +59,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 	if (!lastName) {
 		return res.status(400).json({ type: "MissingLastName" });
 	}
+
 	if (!containsOnlyLatinCharacters(lastName)) {
 		return res.status(400).json({ type: "InvalidLastName" });
 	}
@@ -67,7 +69,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 	if (!email) {
 		return res.status(400).json({ type: "MissingEmail" });
 	}
-	if (!isValidishEmail(email)) {
+	if (!isValidEmail(email)) {
 		return res.status(400).json({ type: "InvalidEmail" });
 	}
 
@@ -91,10 +93,10 @@ app.post("/customers", async (req: Request, res: Response) => {
 	if (!country) {
 		return res.status(400).json({ type: "UnknownCountry" });
 	}
-	if (country.support == "none") {
+	if (country.support === "none") {
 		return res.status(400).json({ type: "CountryNotSupported" });
 	}
-	if (country.support == "coming-soon") {
+	if (country.support === "coming-soon") {
 		return res.status(400).json({ type: "CountrySupportIsComingSoon" });
 	}
 
@@ -144,7 +146,7 @@ app.post("/login", async (req: Request, res: Response) => {
 		await CustomersFileRepository.findByEmail(email);
 
 	if (!customer) {
-		return res.status(400).json({ type: "NoCustomerWithThisEmail" });
+		return res.status(401).json({ type: "NoCustomerWithThisEmail" });
 	}
 
 	const password: string | undefined = req.body.password;
@@ -159,7 +161,7 @@ app.post("/login", async (req: Request, res: Response) => {
 	);
 
 	if (!arePasswordsSame) {
-		return res.status(400).json({ type: "IncorrectPassword" });
+		return res.status(401).json({ type: "IncorrectPassword" });
 	}
 
 	req.session.isAuthenticated = true;
