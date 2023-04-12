@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Text, View } from "react-native";
+import { StyleProp, Text, View, ViewStyle } from "react-native";
+import { CustomButton } from "../components/CustomButton";
 import { AppConfiguration } from "../config";
 import { ColorConstants } from "../constants/colors";
 import { StyleConstants } from "../constants/styles";
@@ -8,6 +9,10 @@ import { CustomTextInput } from "./CustomTextInput";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 
 const marginAboveTextInput = 10;
+
+const buttonHeight = 60;
+const buttonLabelFontSize = 19;
+const buttonLabelWeight = "400";
 
 function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   const [countries, setCountries] = useState([]);
@@ -65,9 +70,23 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         }}
       />
 
-      <View>
-        <Button title="Next" onPress={onPress} />
-      </View>
+      <CustomButton
+        onPress={onPress}
+        labelText="Next"
+        labelStyle={{
+          fontSize: buttonLabelFontSize,
+          fontWeight: buttonLabelWeight,
+          color: ColorConstants.WHITE,
+        }}
+        containerStyle={{
+          height: buttonHeight,
+          borderRadius: StyleConstants.BORDER_RADIUS,
+          backgroundColor: ColorConstants.BLUE,
+          marginLeft: StyleConstants.MARGIN,
+          marginRight: StyleConstants.MARGIN,
+          marginBottom: StyleConstants.MARGIN,
+        }}
+      />
     </View>
   );
 }
@@ -109,7 +128,23 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         }}
       />
 
-      <Button title="Sign Up" onPress={onPress} />
+      <CustomButton
+        onPress={onPress}
+        labelText="Sign up"
+        labelStyle={{
+          fontSize: buttonLabelFontSize,
+          fontWeight: buttonLabelWeight,
+          color: ColorConstants.WHITE,
+        }}
+        containerStyle={{
+          height: buttonHeight,
+          borderRadius: StyleConstants.BORDER_RADIUS,
+          backgroundColor: ColorConstants.BLUE,
+          marginLeft: StyleConstants.MARGIN,
+          marginRight: StyleConstants.MARGIN,
+          marginBottom: StyleConstants.MARGIN,
+        }}
+      />
     </View>
   );
 }
@@ -129,13 +164,11 @@ export function SignUpFlow() {
   }, [currentStep]);
 
   const containerStyle = useMemo(
-    () => ({
+    (): StyleProp<ViewStyle> => ({
       backgroundColor: ColorConstants.WHITE,
       width: 390,
-      height: 450,
-      paddingTop: 50,
-      paddingBottom: 20,
       borderRadius: StyleConstants.BORDER_RADIUS,
+      justifyContent: "center",
     }),
     []
   );

@@ -17,7 +17,11 @@ const containerHeight = 70;
 const textInputHeight = 45;
 const textInputFontSize = 17;
 
+// Just a hack to bypass type errors in the style of TextInput
+const textInputFontWeight: "300" = "300";
+
 const labelFontSize = 12;
+const labelFontWeight = "500";
 const labelFocusedMargin = -5;
 const labelBlurredMargin = -20;
 const labelAnimationBottomToTop = 1;
@@ -90,6 +94,8 @@ export function CustomTextInput(props: {
       height: textInputHeight,
       outlineStyle: "none",
       fontSize: textInputFontSize,
+      fontWeight: textInputFontWeight,
+      color: ColorConstants.BLACK,
     }),
     []
   );
@@ -102,6 +108,7 @@ export function CustomTextInput(props: {
       }),
       color: ColorConstants.GRAY,
       fontSize: labelFontSize,
+      fontWeight: labelFontWeight,
     }),
     []
   );

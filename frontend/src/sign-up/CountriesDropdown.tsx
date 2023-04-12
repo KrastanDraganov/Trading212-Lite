@@ -32,6 +32,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
       zIndex: isCountriesListVisible ? 1 : 0,
       marginLeft: StyleConstants.MARGIN,
       marginRight: StyleConstants.MARGIN,
+      marginTop: StyleConstants.MARGIN,
     }),
     [isCountriesListVisible]
   );
