@@ -9,8 +9,11 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { ColorConstants } from "../constants/colors";
+import { StyleConstants } from "../constants/styles";
 
 const containerHeight = 70;
+
 const textInputHeight = 45;
 const textInputFontSize = 17;
 
@@ -19,8 +22,6 @@ const labelFocusedMargin = -5;
 const labelBlurredMargin = -20;
 const labelAnimationBottomToTop = 1;
 const labelAnimationTopToBottom = 0;
-
-const accentColor = "#747980";
 
 export function CustomTextInput(props: {
   label: string;
@@ -60,6 +61,7 @@ export function CustomTextInput(props: {
 
   const onBlur = useCallback(() => {
     setIsFocused(false);
+
     if (text.length === 0) {
       performLabelAnimation(labelAnimationTopToBottom);
     }
@@ -75,6 +77,8 @@ export function CustomTextInput(props: {
       {
         height: containerHeight,
         justifyContent: "flex-end",
+        marginRight: StyleConstants.MARGIN,
+        marginLeft: StyleConstants.MARGIN,
       },
       props.style,
     ],
@@ -96,7 +100,7 @@ export function CustomTextInput(props: {
         inputRange: [0, 1],
         outputRange: [labelBlurredMargin, labelFocusedMargin],
       }),
-      color: accentColor,
+      color: ColorConstants.GRAY,
       fontSize: labelFontSize,
     }),
     []
@@ -104,7 +108,7 @@ export function CustomTextInput(props: {
 
   const blackLineStyle = useMemo(
     () => ({
-      backgroundColor: accentColor,
+      backgroundColor: ColorConstants.GRAY,
       height: StyleSheet.hairlineWidth,
     }),
     []

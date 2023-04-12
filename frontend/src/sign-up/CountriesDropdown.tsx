@@ -10,8 +10,8 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-
-const accentColor = "#747980";
+import { ColorConstants } from "../constants/colors";
+import { StyleConstants } from "../constants/styles";
 
 export function CountriesDropdown(props: { countries: CountryT[] }) {
   const dropDownFadeAnimation = useRef(new Animated.Value(0)).current;
@@ -27,9 +27,11 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
     };
   }, []);
 
-  const moveViewInfrontStyle = useMemo(
+  const containerStyle = useMemo(
     () => ({
       zIndex: isCountriesListVisible ? 1 : 0,
+      marginLeft: StyleConstants.MARGIN,
+      marginRight: StyleConstants.MARGIN,
     }),
     [isCountriesListVisible]
   );
@@ -53,7 +55,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
   const countryItemStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
       borderWidth: 1,
-      borderColor: accentColor,
+      borderColor: ColorConstants.GRAY,
     }),
     []
   );
@@ -94,7 +96,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
   );
 
   return (
-    <View style={moveViewInfrontStyle}>
+    <View style={containerStyle}>
       <Pressable onPress={onPress}>
         <Text>Select Country</Text>
       </Pressable>

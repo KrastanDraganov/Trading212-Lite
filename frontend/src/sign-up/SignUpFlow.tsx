@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Text, View } from "react-native";
 import { AppConfiguration } from "../config";
+import { ColorConstants } from "../constants/colors";
+import { StyleConstants } from "../constants/styles";
 import { CountriesDropdown } from "./CountriesDropdown";
 import { CustomTextInput } from "./CustomTextInput";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 
 const marginAboveTextInput = 10;
-const marginAboveButton = 20;
 
 function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   const [countries, setCountries] = useState([]);
@@ -60,7 +61,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
           autoCapitalize: "words",
         }}
         style={{
-          marginBottom: marginAboveButton,
+          marginBottom: StyleConstants.MARGIN,
         }}
       />
 
@@ -104,7 +105,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
           secureTextEntry: true,
         }}
         style={{
-          marginBottom: marginAboveButton,
+          marginBottom: StyleConstants.MARGIN,
         }}
       />
 
@@ -127,8 +128,20 @@ export function SignUpFlow() {
     setCurrentStep(newStep);
   }, [currentStep]);
 
+  const containerStyle = useMemo(
+    () => ({
+      backgroundColor: ColorConstants.WHITE,
+      width: 390,
+      height: 450,
+      paddingTop: 50,
+      paddingBottom: 20,
+      borderRadius: StyleConstants.BORDER_RADIUS,
+    }),
+    []
+  );
+
   return (
-    <View>
+    <View style={containerStyle}>
       {currentStep === 0 ? (
         <SignUpFlowStepCustomerDetails onNextPress={onNextPress} />
       ) : null}
