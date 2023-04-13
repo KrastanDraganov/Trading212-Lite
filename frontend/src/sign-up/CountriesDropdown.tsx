@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextStyle,
   View,
   ViewStyle,
 } from "react-native";
@@ -32,6 +33,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
   const [isCountriesListVisible, setIsCountriesListVisisble] = useState(false);
   const [queryText, setQueryText] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("Select country");
+  const [hoveredCountry, setHoveredCountry] = useState("");
 
   useEffect(() => {
     return () => {
@@ -69,6 +71,10 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
   );
 
   const onPress = useCallback(() => {
+    if (isCountriesListVisible) {
+      setQueryText("");
+    }
+
     setIsCountriesListVisisble(!isCountriesListVisible);
 
     const animation = Animated.timing(dropDownFadeAnimation, {
@@ -82,7 +88,13 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
     animation.start();
   }, [isCountriesListVisible]);
 
-  const onCountryPress = useCallback(() => {}, []);
+  const onCountryPress = useCallback((countryName: string) => {
+    setSelectedCountry(countryName);
+  }, []);
+
+  const onCountryHover = useCallback((countryName: string) => {
+    setHoveredCountry(countryName);
+  }, []);
 
   const countryItemStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
@@ -93,21 +105,39 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
     []
   );
 
+  const countryNameStyle = useCallback(
+    (colorText: string): StyleProp<TextStyle> => ({
+      fontSize: 15,
+      fontWeight: "500",
+      color: colorText,
+    }),
+    []
+  );
+
   const renderCountryItem = useCallback(
     (countryRow: ListRenderItemInfo<CountryT>) => (
-      <Pressable onPress={onCountryPress} style={countryItemStyle}>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: "500",
-            color: ColorConstants.GRAY,
-          }}
-        >
-          {countryRow.item.name} - {countryRow.item.support}
-        </Text>
+      <Pressable
+        onPress={() => onCountryPress(countryRow.item.name)}
+        onHoverIn={() => onCountryHover(countryRow.item.name)}
+        onHoverOut={() => onCountryHover("")}
+        style={countryItemStyle}
+      >
+        {countryRow.item.name === selectedCountry ? (
+          <Text style={countryNameStyle(ColorConstants.BLUE)}>
+            {countryRow.item.name} - {countryRow.item.support}
+          </Text>
+        ) : countryRow.item.name === hoveredCountry ? (
+          <Text style={countryNameStyle(ColorConstants.BLACK)}>
+            {countryRow.item.name} - {countryRow.item.support}
+          </Text>
+        ) : (
+          <Text style={countryNameStyle(ColorConstants.GRAY)}>
+            {countryRow.item.name} - {countryRow.item.support}
+          </Text>
+        )}
       </Pressable>
     ),
-    []
+    [selectedCountry, hoveredCountry]
   );
 
   const countriesContairStyle = useMemo(
@@ -116,7 +146,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
       maxHeight: 228,
       left: 0,
       right: 0,
-      top: 50,
+      top: 60,
       opacity: dropDownFadeAnimation,
       backgroundColor: "white",
     }),
@@ -146,7 +176,6 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
     () => (
       <TextInput
         onChangeText={onChangeText}
-        onBlur={onBlur}
         style={textInputStyle}
         editable={isCountriesListVisible}
         value={isCountriesListVisible ? queryText : selectedCountry}
@@ -168,7 +197,7 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
         />
       </Animated.View>
     ),
-    [props.countries, queryText]
+    [props.countries, queryText, hoveredCountry, selectedCountry]
   );
 
   return (
