@@ -16,8 +16,6 @@ const containerHeight = 70;
 
 const textInputHeight = 45;
 const textInputFontSize = 17;
-
-// Just a hack to bypass type errors in the style of TextInput
 const textInputFontWeight: "300" = "300";
 
 const labelFontSize = 12;
