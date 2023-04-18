@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
+  Image,
+  Pressable,
   StyleProp,
   StyleSheet,
   TextInput,
@@ -25,6 +27,8 @@ const labelBlurredMargin = -20;
 const labelAnimationBottomToTop = 1;
 const labelAnimationTopToBottom = 0;
 
+const clearInputButtonImageSize = 33;
+
 export function CustomTextInput(props: {
   label: string;
   style?: StyleProp<ViewStyle>;
@@ -33,6 +37,10 @@ export function CustomTextInput(props: {
 }) {
   const labelAnimationValue = useRef(new Animated.Value(0)).current;
   const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
+
+  const isPassword = useRef<boolean>(
+    props.textInputProps?.textContentType === "password"
+  );
 
   useEffect(() => {
     return () => {
@@ -69,21 +77,46 @@ export function CustomTextInput(props: {
     }
   }, [text]);
 
-  const onChangeText = useCallback((text: string) => {
-    props.onChangeTextProp(text);
-    setText(text);
+  const onChangeText = useCallback((newText: string) => {
+    props.onChangeTextProp(newText);
+    setText(newText);
   }, []);
 
-  const containerStyle = useMemo(
-    (): StyleProp<ViewStyle> => [
+  const clearInputText = useCallback(() => {
+    props.onChangeTextProp("");
+    setText("");
+
+    setIsFocused(false);
+    performLabelAnimation(labelAnimationTopToBottom);
+  }, []);
+
+  const wholeContainerStyle = useMemo(
+    () => [
       {
-        height: containerHeight,
-        justifyContent: "flex-end",
-        marginRight: StyleConstants.MARGIN,
         marginLeft: StyleConstants.MARGIN,
+        marginRight: StyleConstants.MARGIN,
       },
       props.style,
     ],
+    []
+  );
+
+  const textInputAndButtonContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> => ({
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }),
+    []
+  );
+
+  const textInputAndLabelContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> => ({
+      flex: 1,
+      height: containerHeight,
+      justifyContent: "flex-end",
+    }),
     []
   );
 
@@ -111,6 +144,14 @@ export function CustomTextInput(props: {
     []
   );
 
+  const clearInputButtonImageStyle = useMemo(
+    () => ({
+      height: clearInputButtonImageSize,
+      width: clearInputButtonImageSize,
+    }),
+    []
+  );
+
   const blackLineStyle = useMemo(
     () => ({
       backgroundColor: ColorConstants.GRAY,
@@ -119,17 +160,39 @@ export function CustomTextInput(props: {
     []
   );
 
-  return (
-    <View style={containerStyle}>
-      <Animated.Text style={labelStyle}>{props.label}</Animated.Text>
+  const clearInputButton = useCallback(() => {
+    return (
+      <View>
+        {text.length > 0 ? (
+          <Pressable onPress={clearInputText}>
+            <Image
+              style={clearInputButtonImageStyle}
+              source={require("../../assets/images/clear_input_logo.png")}
+            />
+          </Pressable>
+        ) : null}
+      </View>
+    );
+  }, [text]);
 
-      <TextInput
-        {...props.textInputProps}
-        style={textInputStyle}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onChangeText={onChangeText}
-      />
+  return (
+    <View style={wholeContainerStyle}>
+      <View style={textInputAndButtonContainerStyle}>
+        <View style={textInputAndLabelContainerStyle}>
+          <Animated.Text style={labelStyle}>{props.label}</Animated.Text>
+
+          <TextInput
+            {...props.textInputProps}
+            style={textInputStyle}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onChangeText={onChangeText}
+            value={text}
+          />
+        </View>
+
+        {isPassword.current ? null : clearInputButton()}
+      </View>
 
       <View style={blackLineStyle} />
     </View>
