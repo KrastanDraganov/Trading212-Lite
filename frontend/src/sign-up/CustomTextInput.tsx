@@ -69,6 +69,8 @@ export function CustomTextInput(props: {
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const [isButtonBeingPressed, setIsButtonBeingPressed] = useState(false);
+
   const onFocus = useCallback(() => {
     setIsFocused(true);
     performLabelAnimation(labelAnimationBottomToTop);
@@ -81,6 +83,14 @@ export function CustomTextInput(props: {
       performLabelAnimation(labelAnimationTopToBottom);
     }
   }, [text]);
+
+  const onButtonPressIn = useCallback(() => {
+    setIsButtonBeingPressed(true);
+  }, []);
+
+  const onButtonPressOut = useCallback(() => {
+    setIsButtonBeingPressed(false);
+  }, []);
 
   const onChangeText = useCallback((newText: string) => {
     props.onChangeTextProp(newText);
@@ -140,6 +150,11 @@ export function CustomTextInput(props: {
     []
   );
 
+  const isTextInputVisible = useMemo(
+    () => isPassword.current && !isPasswordVisible,
+    [isPassword, isPasswordVisible]
+  );
+
   const labelStyle = useMemo(
     (): StyleProp<TextStyle> | Animated.Animated => ({
       marginBottom: labelAnimationValue.interpolate({
@@ -157,8 +172,9 @@ export function CustomTextInput(props: {
     () => ({
       height: clearInputButtonImageSize,
       width: clearInputButtonImageSize,
+      opacity: isButtonBeingPressed ? 0.5 : 1,
     }),
-    []
+    [isButtonBeingPressed]
   );
 
   const viewPasswordButtonContainerStyle = useMemo(
@@ -176,8 +192,9 @@ export function CustomTextInput(props: {
       height: viewPasswordButtonImageSize,
       width: viewPasswordButtonImageSize,
       tintColor: isPasswordVisible ? ColorConstants.BLUE : ColorConstants.ICON,
+      opacity: isButtonBeingPressed ? 0.5 : 1,
     }),
-    [isPasswordVisible]
+    [isPasswordVisible, isButtonBeingPressed]
   );
 
   const blackLineStyle = useMemo(
@@ -192,7 +209,11 @@ export function CustomTextInput(props: {
     return (
       <View>
         {text.length > 0 ? (
-          <Pressable onPress={clearInputText}>
+          <Pressable
+            onPress={clearInputText}
+            onPressIn={onButtonPressIn}
+            onPressOut={onButtonPressOut}
+          >
             <Image
               style={clearInputButtonImageStyle}
               source={require("../../assets/images/clear_input_logo.png")}
@@ -201,7 +222,7 @@ export function CustomTextInput(props: {
         ) : null}
       </View>
     );
-  }, [text]);
+  }, [text, isButtonBeingPressed]);
 
   const viewPasswordButton = useCallback(() => {
     return (
@@ -210,6 +231,8 @@ export function CustomTextInput(props: {
           <Pressable
             style={viewPasswordButtonContainerStyle}
             onPress={changePasswordVisibility}
+            onPressIn={onButtonPressIn}
+            onPressOut={onButtonPressOut}
           >
             <Image
               style={viewPasswordButtonImageStyle}
@@ -219,7 +242,7 @@ export function CustomTextInput(props: {
         ) : null}
       </View>
     );
-  }, [text, isPasswordVisible]);
+  }, [text, isPasswordVisible, isButtonBeingPressed]);
 
   return (
     <View style={wholeContainerStyle}>
@@ -234,7 +257,7 @@ export function CustomTextInput(props: {
             onBlur={onBlur}
             onChangeText={onChangeText}
             value={text}
-            secureTextEntry={!isPasswordVisible}
+            secureTextEntry={isTextInputVisible}
           />
         </View>
 
