@@ -172,6 +172,7 @@ export function CustomTextInput(props: {
     () => ({
       height: clearInputButtonImageSize,
       width: clearInputButtonImageSize,
+      tintColor: ColorConstants.ICON,
       opacity: isButtonBeingPressed ? 0.5 : 1,
     }),
     [isButtonBeingPressed]
