@@ -216,7 +216,6 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         }}
         textInputProps={{
           textContentType: "password",
-          secureTextEntry: true,
         }}
         style={{
           marginBottom: StyleConstants.MARGIN,

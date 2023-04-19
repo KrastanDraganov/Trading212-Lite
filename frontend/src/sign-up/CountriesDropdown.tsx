@@ -137,10 +137,12 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
 
   const blackLineStyle = useMemo(
     () => ({
-      backgroundColor: ColorConstants.GRAY,
+      backgroundColor: isCountriesListVisible
+        ? ColorConstants.BLUE
+        : ColorConstants.GRAY,
       height: StyleSheet.hairlineWidth,
     }),
-    []
+    [isCountriesListVisible]
   );
 
   const countryItemStyle = useCallback(

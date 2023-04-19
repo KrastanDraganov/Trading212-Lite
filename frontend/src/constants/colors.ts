@@ -7,4 +7,5 @@ export class ColorConstants {
   static readonly GREEN = "#1BC47D";
   static readonly PAGE_BACKGROUND = "#ECEDF1";
   static readonly HIGHLIGHTED_ITEM = "#F4F4F6";
+  static readonly ICON = "#DADBE2";
 }

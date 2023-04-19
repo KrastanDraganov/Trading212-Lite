@@ -29,6 +29,9 @@ const labelAnimationTopToBottom = 0;
 
 const clearInputButtonImageSize = 33;
 
+const viewPasswordButtonContainerSize = 33;
+const viewPasswordButtonImageSize = 24;
+
 export function CustomTextInput(props: {
   label: string;
   style?: StyleProp<ViewStyle>;
@@ -37,10 +40,6 @@ export function CustomTextInput(props: {
 }) {
   const labelAnimationValue = useRef(new Animated.Value(0)).current;
   const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
-
-  const isPassword = useRef<boolean>(
-    props.textInputProps?.textContentType === "password"
-  );
 
   useEffect(() => {
     return () => {
@@ -63,6 +62,12 @@ export function CustomTextInput(props: {
 
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState("");
+
+  const isPassword = useRef<boolean>(
+    props.textInputProps?.textContentType === "password"
+  );
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const onFocus = useCallback(() => {
     setIsFocused(true);
@@ -89,6 +94,10 @@ export function CustomTextInput(props: {
     setIsFocused(false);
     performLabelAnimation(labelAnimationTopToBottom);
   }, []);
+
+  const changePasswordVisibility = useCallback(() => {
+    setIsPasswordVisible(!isPasswordVisible);
+  }, [isPasswordVisible]);
 
   const wholeContainerStyle = useMemo(
     () => [
@@ -152,12 +161,31 @@ export function CustomTextInput(props: {
     []
   );
 
-  const blackLineStyle = useMemo(
-    () => ({
-      backgroundColor: ColorConstants.GRAY,
-      height: StyleSheet.hairlineWidth,
+  const viewPasswordButtonContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> => ({
+      height: viewPasswordButtonContainerSize,
+      width: viewPasswordButtonContainerSize,
+      alignItems: "center",
+      justifyContent: "center",
     }),
     []
+  );
+
+  const viewPasswordButtonImageStyle = useMemo(
+    () => ({
+      height: viewPasswordButtonImageSize,
+      width: viewPasswordButtonImageSize,
+      tintColor: isPasswordVisible ? ColorConstants.BLUE : ColorConstants.ICON,
+    }),
+    [isPasswordVisible]
+  );
+
+  const blackLineStyle = useMemo(
+    () => ({
+      backgroundColor: isFocused ? ColorConstants.BLUE : ColorConstants.GRAY,
+      height: StyleSheet.hairlineWidth,
+    }),
+    [isFocused]
   );
 
   const clearInputButton = useCallback(() => {
@@ -175,6 +203,24 @@ export function CustomTextInput(props: {
     );
   }, [text]);
 
+  const viewPasswordButton = useCallback(() => {
+    return (
+      <View>
+        {text.length > 0 ? (
+          <Pressable
+            style={viewPasswordButtonContainerStyle}
+            onPress={changePasswordVisibility}
+          >
+            <Image
+              style={viewPasswordButtonImageStyle}
+              source={require("../../assets/images/eye_icon.png")}
+            />
+          </Pressable>
+        ) : null}
+      </View>
+    );
+  }, [text, isPasswordVisible]);
+
   return (
     <View style={wholeContainerStyle}>
       <View style={textInputAndButtonContainerStyle}>
@@ -188,10 +234,11 @@ export function CustomTextInput(props: {
             onBlur={onBlur}
             onChangeText={onChangeText}
             value={text}
+            secureTextEntry={!isPasswordVisible}
           />
         </View>
 
-        {isPassword.current ? null : clearInputButton()}
+        {isPassword.current ? viewPasswordButton() : clearInputButton()}
       </View>
 
       <View style={blackLineStyle} />
