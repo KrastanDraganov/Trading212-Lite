@@ -1,11 +1,10 @@
-export type CustomerT = 
-{
-    id: string;
+export type CustomerT = {
+	id: string;
 
-    email: string;
-    password: string;
+	email: string;
+	password: string;
 
-    givenName: string;
-    lastName: string;
-    countryCode: string;
-}
+	givenName: string;
+	lastName: string;
+	countryCode: string;
+};

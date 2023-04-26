@@ -1,31 +1,28 @@
-import express, { Express, Request, Response } from 'express'
-import { Countries } from './repositories/Countries';
-import { isValidishEmail } from './validations/email';
-import { containsOnlyLatinCharacters } from './validations/names';
-import CustomersFileRepository from './repositories/Customers';
-import { CountryT } from './models/Country';
 import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from 'uuid';
-import { isPasswordSecure } from './validations/password';
-import session from 'express-session';
-import { CustomerT } from './models/Customer';
+import { CountryT } from "customer-commons";
+import express, { Express, Request, Response } from "express";
+import session from "express-session";
+import { v4 as uuidv4 } from "uuid";
+import { CustomerT } from "./models/Customer";
+import { Countries } from "./repositories/Countries";
+import CustomersFileRepository from "./repositories/Customers";
+import { isValidEmail } from "./validations/email";
+import { containsOnlyLatinCharacters } from "./validations/names";
+import { isPasswordSecure } from "./validations/password";
 
 const app: Express = express();
 const port = 8081;
 
-const sessionConfiguration = 
-{
-  secret: "onlyCSKA",
-  saveUninitialized: true,
-  resave: true
+const sessionConfiguration = {
+	secret: "onlyCSKA",
+	saveUninitialized: true,
+	resave: true,
 };
 
-declare module "express-session" 
-{
-  interface SessionData 
-  {
-    isAuthenticated: boolean;
-  }
+declare module "express-session" {
+	interface SessionData {
+		isAuthenticated: boolean;
+	}
 }
 
 CustomersFileRepository.init();
@@ -33,171 +30,151 @@ CustomersFileRepository.init();
 app.use(express.json());
 app.use(session(sessionConfiguration));
 
-app.get("/", (req: Request, res: Response) => 
-{
-  // TO DO - Fix Redirect
-  res.status(400).send(":|");
+app.get("/", (req: Request, res: Response) => {
+	// TO DO - Fix Redirect
+	res.status(400).send(":|");
 });
 
-app.get("/countries", (req: Request, res: Response) =>
-{
-  res.json(Countries);
+app.get("/countries", (req: Request, res: Response) => {
+	res.header("Access-Control-Allow-Origin", "*").json(Countries);
 });
 
-app.post("/customers", async (req: Request, res: Response) => 
-{
-  if (!req.body) 
-  {
-    return res.status(400).json({ type: "NoPayload" });
-  }
+app.post("/customers", async (req: Request, res: Response) => {
+	if (!req.body) {
+		return res.status(400).json({ type: "NoPayload" });
+	}
 
-  const givenNames: string | undefined = req.body.givenNames;
+	const givenNames: string | undefined = req.body.givenNames;
 
-  if (!givenNames)
-  {
-    return res.status(400).json({ type: "MissingGivenNames" });
-  }
-  if (!containsOnlyLatinCharacters(givenNames))
-  {
-    return res.status(400).json({ type: "InvalidGivenNames" });
-  }
+	if (!givenNames) {
+		return res.status(400).json({ type: "MissingGivenNames" });
+	}
 
-  const lastName: string | undefined = req.body.lastName;
+	if (!containsOnlyLatinCharacters(givenNames)) {
+		return res.status(400).json({ type: "InvalidGivenNames" });
+	}
 
-  if (!lastName)
-  {
-    return res.status(400).json({ type: "MissingLastName" });
-  }
-  if (!containsOnlyLatinCharacters(lastName))
-  {
-    return res.status(400).json({ type: "InvalidLastName" });
-  }
+	const lastName: string | undefined = req.body.lastName;
 
-  const email: string | undefined = req.body.email;
+	if (!lastName) {
+		return res.status(400).json({ type: "MissingLastName" });
+	}
 
-  if (!email)
-  {
-    return res.status(400).json({ type: "MissingEmail" });
-  }
-  if (!isValidishEmail(email))
-  {
-    return res.status(400).json({ type: "InvalidEmail" });
-  }
+	if (!containsOnlyLatinCharacters(lastName)) {
+		return res.status(400).json({ type: "InvalidLastName" });
+	}
 
-  const existingCustomer: CustomerT | undefined = await CustomersFileRepository.findByEmail(email);
-  
-  if (existingCustomer)
-  {
-    return res.status(400).json({ type: "EmailAlreadyInUse" });
-  }
+	const email: string | undefined = req.body.email;
 
-  const countryCode: string | undefined = req.body.countryCode;
-  
-  if (!countryCode)
-  {
-    return res.status(400).json({ type: "MissingCountryCode" });
-  }
+	if (!email) {
+		return res.status(400).json({ type: "MissingEmail" });
+	}
+	if (!isValidEmail(email)) {
+		return res.status(400).json({ type: "InvalidEmail" });
+	}
 
-  const country: CountryT | undefined = Countries.find((item) => item.code === countryCode);
-  
-  if (!country)
-  {
-    return res.status(400).json({ type: "UnknownCountry" });
-  }
-  if (country.support == "none")
-  {
-    return res.status(400).json({ type: "CountryNotSupported" });
-  }
-  if (country.support == "coming-soon")
-  {
-    return res.status(400).json({ type: "CountrySupportIsComingSoon" });
-  }
+	const existingCustomer: CustomerT | undefined =
+		await CustomersFileRepository.findByEmail(email);
 
-  const password: string | undefined = req.body.password;
-  
-  if (!password)
-  {
-    return res.status(400).json({ type: "MissingPassword" });
-  }
-  if (!isPasswordSecure(password))
-  {
-    return res.status(400).json({ type: "PasswordNotSecureEnough" });
-  }
+	if (existingCustomer) {
+		return res.status(400).json({ type: "EmailAlreadyInUse" });
+	}
 
-  const hashedPassword: string = await bcrypt.hash(password, 10);
+	const countryCode: string | undefined = req.body.countryCode;
 
-  const customerID = uuidv4();
-  
-  const newCustomer = await CustomersFileRepository.add(
-  {
-    id: customerID,
-    givenName: givenNames,
-    lastName: lastName,
-    email: email,
-    password: hashedPassword,
-    countryCode: countryCode
-  });
+	if (!countryCode) {
+		return res.status(400).json({ type: "MissingCountryCode" });
+	}
 
-  req.session.isAuthenticated = true;
+	const country: CountryT | undefined = Countries.find(
+		(item) => item.code === countryCode
+	);
 
-  res.json(
-    {
-      id: newCustomer.id,
-      email: newCustomer.email,
-      countryCode: newCustomer.countryCode
-    }
-  );
+	if (!country) {
+		return res.status(400).json({ type: "UnknownCountry" });
+	}
+	if (country.support === "none") {
+		return res.status(400).json({ type: "CountryNotSupported" });
+	}
+	if (country.support === "coming-soon") {
+		return res.status(400).json({ type: "CountrySupportIsComingSoon" });
+	}
+
+	const password: string | undefined = req.body.password;
+
+	if (!password) {
+		return res.status(400).json({ type: "MissingPassword" });
+	}
+	if (!isPasswordSecure(password)) {
+		return res.status(400).json({ type: "PasswordNotSecureEnough" });
+	}
+
+	const hashedPassword: string = await bcrypt.hash(password, 10);
+
+	const customerID = uuidv4();
+
+	const newCustomer = await CustomersFileRepository.add({
+		id: customerID,
+		givenName: givenNames,
+		lastName: lastName,
+		email: email,
+		password: hashedPassword,
+		countryCode: countryCode,
+	});
+
+	req.session.isAuthenticated = true;
+
+	res.json({
+		id: newCustomer.id,
+		email: newCustomer.email,
+		countryCode: newCustomer.countryCode,
+	});
 });
 
-app.post("/login", async (req: Request, res: Response) =>
-{
-  if (!req.body) 
-  {
-    return res.status(400).json({ type: "NoPayload" });
-  }
+app.post("/login", async (req: Request, res: Response) => {
+	if (!req.body) {
+		return res.status(400).json({ type: "NoPayload" });
+	}
 
-  const email: string | undefined = req.body.email;
-  
-  if (!email)
-  {
-    return res.status(400).json({ type: "MissingEmail" });
-  }
+	const email: string | undefined = req.body.email;
 
-  const customer: CustomerT | undefined = await CustomersFileRepository.findByEmail(email);
+	if (!email) {
+		return res.status(400).json({ type: "MissingEmail" });
+	}
 
-  if (!customer)
-  {
-    return res.status(400).json({ type: "NoCustomerWithThisEmail" });
-  }
+	const customer: CustomerT | undefined =
+		await CustomersFileRepository.findByEmail(email);
 
-  const password: string | undefined = req.body.password;
+	if (!customer) {
+		return res.status(401).json({ type: "NoCustomerWithThisEmail" });
+	}
 
-  if (!password)
-  {
-    return res.status(400).json({ type: "MissingPassword" });
-  }
+	const password: string | undefined = req.body.password;
 
-  const arePasswordsSame: boolean = await bcrypt.compare(password, customer.password);
+	if (!password) {
+		return res.status(400).json({ type: "MissingPassword" });
+	}
 
-  if (!arePasswordsSame)
-  {
-    return res.status(400).json({ type: "IncorrectPassword" });
-  }
+	const arePasswordsSame: boolean = await bcrypt.compare(
+		password,
+		customer.password
+	);
 
-  req.session.isAuthenticated = true;
-  
-  res.json(
-    {
-      id: customer.id,
-      email: customer.email,
-      countryCode: customer.countryCode
-    }
-  );
+	if (!arePasswordsSame) {
+		return res.status(401).json({ type: "IncorrectPassword" });
+	}
+
+	req.session.isAuthenticated = true;
+
+	res.json({
+		id: customer.id,
+		email: customer.email,
+		countryCode: customer.countryCode,
+	});
 });
 
-app.listen(port, () => 
-{
-  console.log(
-    `⚡️[server]: Customer Service is running at http://localhost:${port}`
-  );
-})
+app.listen(port, () => {
+	console.log(
+		`⚡️[server]: Customer Service is running at http://localhost:${port}`
+	);
+});
