@@ -1,14 +1,16 @@
 import bcrypt from "bcrypt";
-import { CountryT } from "customer-commons";
+import {
+	containsOnlyLatinCharacters,
+	CountryT,
+	isPasswordSecure,
+	isValidEmail,
+} from "customer-commons";
 import express, { Express, Request, Response } from "express";
 import session from "express-session";
 import { v4 as uuidv4 } from "uuid";
 import { CustomerT } from "./models/Customer";
 import { Countries } from "./repositories/Countries";
 import CustomersFileRepository from "./repositories/Customers";
-import { isValidEmail } from "./validations/email";
-import { containsOnlyLatinCharacters } from "./validations/names";
-import { isPasswordSecure } from "./validations/password";
 
 const app: Express = express();
 const port = 8081;

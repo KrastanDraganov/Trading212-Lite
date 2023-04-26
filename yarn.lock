@@ -3699,7 +3699,7 @@ csstype@^3.0.2:
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.1.tgz"
   integrity sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==
 
-customer-commons@../customer-commons, "customer-commons@file:../customer-commons":
+customer-commons@../customer-commons, "customer-commons@file:/home/fif2205/Documents/Trading212Course/Trading212-Lite/customer-commons":
   version "1.0.0"
   resolved "file:customer-commons"
 
@@ -4617,6 +4617,7 @@ fresh@0.5.2:
   dependencies:
     "@expo/webpack-config" "^18.0.1"
     "@types/react-native" "^0.71.5"
+    customer-commons "../customer-commons"
     expo "^1.0.0"
     expo-status-bar "~1.4.4"
     react "18.2.0"

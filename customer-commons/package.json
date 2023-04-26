@@ -1,11 +1,11 @@
 {
-  "name": "customer-commons",
-  "version": "1.0.0",
-  "description": "Common types and validations related to the customer",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "customer-commons",
+	"version": "1.0.0",
+	"description": "Common types and validations related to the customer",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC"
 }
