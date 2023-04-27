@@ -1947,7 +1947,7 @@
     "@types/express-session" "^1.17.7"
     "@types/uuid" "^9.0.1"
     bcrypt "^5.1.0"
-    customer-commons "file:../customer-commons"
+    customer-commons "../customer-commons"
     express-session "^1.17.3"
     uuid "^9.0.0"
     uuidv4 "^6.2.13"

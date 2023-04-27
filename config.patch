@@ -1,0 +1,2311 @@
+diff --git a/customer-commons/package.json b/customer-commons/package.json
+index 6dc60ac..0dfb896 100644
+--- a/customer-commons/package.json
++++ b/customer-commons/package.json
+@@ -1,11 +1,12 @@
+ {
+-	"name": "customer-commons",
+-	"version": "1.0.0",
+-	"description": "Common types and validations related to the customer",
+-	"main": "index.js",
+-	"scripts": {
+-		"test": "echo \"Error: no test specified\" && exit 1"
+-	},
+-	"author": "",
+-	"license": "ISC"
++  "name": "customer-commons",
++  "version": "1.0.0",
++  "description": "Common types and validations related to the customer",
++  "main": "./dist/index.js",
++  "scripts": {
++    "build": "rm -rf dist && tsc -b",
++    "test": "echo \"Error: no test specified\" && exit 1"
++  },
++  "author": "",
++  "license": "ISC"
+ }
+diff --git a/customer-commons/tsconfig.json b/customer-commons/tsconfig.json
+new file mode 100644
+index 0000000..9bf7b6d
+--- /dev/null
++++ b/customer-commons/tsconfig.json
+@@ -0,0 +1,104 @@
++{
++  "compilerOptions": {
++    /* Visit https://aka.ms/tsconfig to read more about this file */
++
++    /* Projects */
++    // "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
++    // "composite": true,                                /* Enable constraints that allow a TypeScript project to be used with project references. */
++    // "tsBuildInfoFile": "./.tsbuildinfo",              /* Specify the path to .tsbuildinfo incremental compilation file. */
++    // "disableSourceOfProjectReferenceRedirect": true,  /* Disable preferring source files instead of declaration files when referencing composite projects. */
++    // "disableSolutionSearching": true,                 /* Opt a project out of multi-project reference checking when editing. */
++    // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
++
++    /* Language and Environment */
++    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
++    // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
++    // "jsx": "preserve",                                /* Specify what JSX code is generated. */
++    // "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
++    // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
++    // "jsxFactory": "",                                 /* Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'. */
++    // "jsxFragmentFactory": "",                         /* Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'. */
++    // "jsxImportSource": "",                            /* Specify module specifier used to import the JSX factory functions when using 'jsx: react-jsx*'. */
++    // "reactNamespace": "",                             /* Specify the object invoked for 'createElement'. This only applies when targeting 'react' JSX emit. */
++    // "noLib": true,                                    /* Disable including any library files, including the default lib.d.ts. */
++    // "useDefineForClassFields": true,                  /* Emit ECMAScript-standard-compliant class fields. */
++    // "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
++
++    /* Modules */
++    "module": "commonjs",                                /* Specify what module code is generated. */
++    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
++    // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
++    // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
++    // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
++    // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
++    // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
++    // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
++    // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
++    // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
++    // "resolveJsonModule": true,                        /* Enable importing .json files. */
++    // "noResolve": true,                                /* Disallow 'import's, 'require's or '<reference>'s from expanding the number of files TypeScript should add to a project. */
++
++    /* JavaScript Support */
++    // "allowJs": true,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
++    // "checkJs": true,                                  /* Enable error reporting in type-checked JavaScript files. */
++    // "maxNodeModuleJsDepth": 1,                        /* Specify the maximum folder depth used for checking JavaScript files from 'node_modules'. Only applicable with 'allowJs'. */
++
++    /* Emit */
++    // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
++    // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
++    // "emitDeclarationOnly": true,                      /* Only output d.ts files and not JavaScript files. */
++    // "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
++    // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
++    // "outDir": "./",                                   /* Specify an output folder for all emitted files. */
++    // "removeComments": true,                           /* Disable emitting comments. */
++    // "noEmit": true,                                   /* Disable emitting files from a compilation. */
++    // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
++    // "importsNotUsedAsValues": "remove",               /* Specify emit/checking behavior for imports that are only used for types. */
++    // "downlevelIteration": true,                       /* Emit more compliant, but verbose and less performant JavaScript for iteration. */
++    // "sourceRoot": "",                                 /* Specify the root path for debuggers to find the reference source code. */
++    // "mapRoot": "",                                    /* Specify the location where debugger should locate map files instead of generated locations. */
++    // "inlineSourceMap": true,                          /* Include sourcemap files inside the emitted JavaScript. */
++    // "inlineSources": true,                            /* Include source code in the sourcemaps inside the emitted JavaScript. */
++    // "emitBOM": true,                                  /* Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files. */
++    // "newLine": "crlf",                                /* Set the newline character for emitting files. */
++    // "stripInternal": true,                            /* Disable emitting declarations that have '@internal' in their JSDoc comments. */
++    // "noEmitHelpers": true,                            /* Disable generating custom helper functions like '__extends' in compiled output. */
++    // "noEmitOnError": true,                            /* Disable emitting files if any type checking errors are reported. */
++    // "preserveConstEnums": true,                       /* Disable erasing 'const enum' declarations in generated code. */
++    // "declarationDir": "./",                           /* Specify the output directory for generated declaration files. */
++    // "preserveValueImports": true,                     /* Preserve unused imported values in the JavaScript output that would otherwise be removed. */
++    "outDir": "./dist",
++
++    /* Interop Constraints */
++    // "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
++    // "allowSyntheticDefaultImports": true,             /* Allow 'import x from y' when a module doesn't have a default export. */
++    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
++    // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
++    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
++
++    /* Type Checking */
++    "strict": true,                                      /* Enable all strict type-checking options. */
++    // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
++    // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
++    // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
++    // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
++    // "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
++    // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
++    // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
++    // "alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
++    // "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
++    // "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
++    // "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
++    // "noImplicitReturns": true,                        /* Enable error reporting for codepaths that do not explicitly return in a function. */
++    // "noFallthroughCasesInSwitch": true,               /* Enable error reporting for fallthrough cases in switch statements. */
++    // "noUncheckedIndexedAccess": true,                 /* Add 'undefined' to a type when accessed using an index. */
++    // "noImplicitOverride": true,                       /* Ensure overriding members in derived classes are marked with an override modifier. */
++    // "noPropertyAccessFromIndexSignature": true,       /* Enforces using indexed accessors for keys declared using an indexed type. */
++    // "allowUnusedLabels": true,                        /* Disable error reporting for unused labels. */
++    // "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
++
++    /* Completeness */
++    // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
++    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
++  }
++}
+diff --git a/customer-service/package-lock.json b/customer-service/package-lock.json
+new file mode 100644
+index 0000000..e60438d
+--- /dev/null
++++ b/customer-service/package-lock.json
+@@ -0,0 +1,2104 @@
++{
++	"name": "@trading212-lite/customer-service",
++	"version": "1.0.0",
++	"lockfileVersion": 2,
++	"requires": true,
++	"packages": {
++		"": {
++			"name": "@trading212-lite/customer-service",
++			"version": "1.0.0",
++			"license": "ISC",
++			"dependencies": {
++				"@types/bcrypt": "^5.0.0",
++				"@types/express-session": "^1.17.7",
++				"@types/uuid": "^9.0.1",
++				"bcrypt": "^5.1.0",
++				"customer-commons": "../customer-commons",
++				"express-session": "^1.17.3",
++				"uuid": "^9.0.0",
++				"uuidv4": "^6.2.13"
++			},
++			"devDependencies": {
++				"@types/express": "^4.17.17",
++				"@types/node": "^18.11.19",
++				"concurrently": "^7.6.0",
++				"nodemon": "^2.0.20",
++				"typescript": "^4.9.5"
++			}
++		},
++		"../customer-commons": {
++			"version": "1.0.0",
++			"license": "ISC"
++		},
++		"node_modules/@mapbox/node-pre-gyp": {
++			"version": "1.0.10",
++			"license": "BSD-3-Clause",
++			"dependencies": {
++				"detect-libc": "^2.0.0",
++				"https-proxy-agent": "^5.0.0",
++				"make-dir": "^3.1.0",
++				"node-fetch": "^2.6.7",
++				"nopt": "^5.0.0",
++				"npmlog": "^5.0.1",
++				"rimraf": "^3.0.2",
++				"semver": "^7.3.5",
++				"tar": "^6.1.11"
++			},
++			"bin": {
++				"node-pre-gyp": "bin/node-pre-gyp"
++			}
++		},
++		"node_modules/@types/bcrypt": {
++			"version": "5.0.0",
++			"license": "MIT",
++			"dependencies": {
++				"@types/node": "*"
++			}
++		},
++		"node_modules/@types/body-parser": {
++			"version": "1.19.2",
++			"license": "MIT",
++			"dependencies": {
++				"@types/connect": "*",
++				"@types/node": "*"
++			}
++		},
++		"node_modules/@types/connect": {
++			"version": "3.4.35",
++			"license": "MIT",
++			"dependencies": {
++				"@types/node": "*"
++			}
++		},
++		"node_modules/@types/express": {
++			"version": "4.17.17",
++			"license": "MIT",
++			"dependencies": {
++				"@types/body-parser": "*",
++				"@types/express-serve-static-core": "^4.17.33",
++				"@types/qs": "*",
++				"@types/serve-static": "*"
++			}
++		},
++		"node_modules/@types/express-serve-static-core": {
++			"version": "4.17.34",
++			"license": "MIT",
++			"dependencies": {
++				"@types/node": "*",
++				"@types/qs": "*",
++				"@types/range-parser": "*",
++				"@types/send": "*"
++			}
++		},
++		"node_modules/@types/express-session": {
++			"version": "1.17.7",
++			"license": "MIT",
++			"dependencies": {
++				"@types/express": "*"
++			}
++		},
++		"node_modules/@types/mime": {
++			"version": "1.3.2",
++			"license": "MIT"
++		},
++		"node_modules/@types/node": {
++			"version": "18.16.1",
++			"license": "MIT"
++		},
++		"node_modules/@types/qs": {
++			"version": "6.9.7",
++			"license": "MIT"
++		},
++		"node_modules/@types/range-parser": {
++			"version": "1.2.4",
++			"license": "MIT"
++		},
++		"node_modules/@types/send": {
++			"version": "0.17.1",
++			"license": "MIT",
++			"dependencies": {
++				"@types/mime": "^1",
++				"@types/node": "*"
++			}
++		},
++		"node_modules/@types/serve-static": {
++			"version": "1.15.1",
++			"license": "MIT",
++			"dependencies": {
++				"@types/mime": "*",
++				"@types/node": "*"
++			}
++		},
++		"node_modules/@types/uuid": {
++			"version": "9.0.1",
++			"license": "MIT"
++		},
++		"node_modules/abbrev": {
++			"version": "1.1.1",
++			"license": "ISC"
++		},
++		"node_modules/agent-base": {
++			"version": "6.0.2",
++			"license": "MIT",
++			"dependencies": {
++				"debug": "4"
++			},
++			"engines": {
++				"node": ">= 6.0.0"
++			}
++		},
++		"node_modules/agent-base/node_modules/debug": {
++			"version": "4.3.4",
++			"license": "MIT",
++			"dependencies": {
++				"ms": "2.1.2"
++			},
++			"engines": {
++				"node": ">=6.0"
++			},
++			"peerDependenciesMeta": {
++				"supports-color": {
++					"optional": true
++				}
++			}
++		},
++		"node_modules/agent-base/node_modules/ms": {
++			"version": "2.1.2",
++			"license": "MIT"
++		},
++		"node_modules/ansi-regex": {
++			"version": "5.0.1",
++			"license": "MIT",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/ansi-styles": {
++			"version": "4.3.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"color-convert": "^2.0.1"
++			},
++			"engines": {
++				"node": ">=8"
++			},
++			"funding": {
++				"url": "https://github.com/chalk/ansi-styles?sponsor=1"
++			}
++		},
++		"node_modules/anymatch": {
++			"version": "3.1.3",
++			"dev": true,
++			"license": "ISC",
++			"dependencies": {
++				"normalize-path": "^3.0.0",
++				"picomatch": "^2.0.4"
++			},
++			"engines": {
++				"node": ">= 8"
++			}
++		},
++		"node_modules/aproba": {
++			"version": "2.0.0",
++			"license": "ISC"
++		},
++		"node_modules/are-we-there-yet": {
++			"version": "2.0.0",
++			"license": "ISC",
++			"dependencies": {
++				"delegates": "^1.0.0",
++				"readable-stream": "^3.6.0"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/balanced-match": {
++			"version": "1.0.2",
++			"license": "MIT"
++		},
++		"node_modules/bcrypt": {
++			"version": "5.1.0",
++			"hasInstallScript": true,
++			"license": "MIT",
++			"dependencies": {
++				"@mapbox/node-pre-gyp": "^1.0.10",
++				"node-addon-api": "^5.0.0"
++			},
++			"engines": {
++				"node": ">= 10.0.0"
++			}
++		},
++		"node_modules/binary-extensions": {
++			"version": "2.2.0",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/brace-expansion": {
++			"version": "1.1.11",
++			"license": "MIT",
++			"dependencies": {
++				"balanced-match": "^1.0.0",
++				"concat-map": "0.0.1"
++			}
++		},
++		"node_modules/braces": {
++			"version": "3.0.2",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"fill-range": "^7.0.1"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/chalk": {
++			"version": "4.1.2",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"ansi-styles": "^4.1.0",
++				"supports-color": "^7.1.0"
++			},
++			"engines": {
++				"node": ">=10"
++			},
++			"funding": {
++				"url": "https://github.com/chalk/chalk?sponsor=1"
++			}
++		},
++		"node_modules/chalk/node_modules/supports-color": {
++			"version": "7.2.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"has-flag": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/chokidar": {
++			"version": "3.5.3",
++			"dev": true,
++			"funding": [
++				{
++					"type": "individual",
++					"url": "https://paulmillr.com/funding/"
++				}
++			],
++			"license": "MIT",
++			"dependencies": {
++				"anymatch": "~3.1.2",
++				"braces": "~3.0.2",
++				"glob-parent": "~5.1.2",
++				"is-binary-path": "~2.1.0",
++				"is-glob": "~4.0.1",
++				"normalize-path": "~3.0.0",
++				"readdirp": "~3.6.0"
++			},
++			"engines": {
++				"node": ">= 8.10.0"
++			},
++			"optionalDependencies": {
++				"fsevents": "~2.3.2"
++			}
++		},
++		"node_modules/chownr": {
++			"version": "2.0.0",
++			"license": "ISC",
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/cliui": {
++			"version": "8.0.1",
++			"dev": true,
++			"license": "ISC",
++			"dependencies": {
++				"string-width": "^4.2.0",
++				"strip-ansi": "^6.0.1",
++				"wrap-ansi": "^7.0.0"
++			},
++			"engines": {
++				"node": ">=12"
++			}
++		},
++		"node_modules/color-convert": {
++			"version": "2.0.1",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"color-name": "~1.1.4"
++			},
++			"engines": {
++				"node": ">=7.0.0"
++			}
++		},
++		"node_modules/color-name": {
++			"version": "1.1.4",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/color-support": {
++			"version": "1.1.3",
++			"license": "ISC",
++			"bin": {
++				"color-support": "bin.js"
++			}
++		},
++		"node_modules/concat-map": {
++			"version": "0.0.1",
++			"license": "MIT"
++		},
++		"node_modules/concurrently": {
++			"version": "7.6.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"chalk": "^4.1.0",
++				"date-fns": "^2.29.1",
++				"lodash": "^4.17.21",
++				"rxjs": "^7.0.0",
++				"shell-quote": "^1.7.3",
++				"spawn-command": "^0.0.2-1",
++				"supports-color": "^8.1.0",
++				"tree-kill": "^1.2.2",
++				"yargs": "^17.3.1"
++			},
++			"bin": {
++				"conc": "dist/bin/concurrently.js",
++				"concurrently": "dist/bin/concurrently.js"
++			},
++			"engines": {
++				"node": "^12.20.0 || ^14.13.0 || >=16.0.0"
++			},
++			"funding": {
++				"url": "https://github.com/open-cli-tools/concurrently?sponsor=1"
++			}
++		},
++		"node_modules/console-control-strings": {
++			"version": "1.1.0",
++			"license": "ISC"
++		},
++		"node_modules/cookie": {
++			"version": "0.4.2",
++			"license": "MIT",
++			"engines": {
++				"node": ">= 0.6"
++			}
++		},
++		"node_modules/cookie-signature": {
++			"version": "1.0.6",
++			"license": "MIT"
++		},
++		"node_modules/customer-commons": {
++			"resolved": "../customer-commons",
++			"link": true
++		},
++		"node_modules/date-fns": {
++			"version": "2.29.3",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.11"
++			},
++			"funding": {
++				"type": "opencollective",
++				"url": "https://opencollective.com/date-fns"
++			}
++		},
++		"node_modules/debug": {
++			"version": "2.6.9",
++			"license": "MIT",
++			"dependencies": {
++				"ms": "2.0.0"
++			}
++		},
++		"node_modules/delegates": {
++			"version": "1.0.0",
++			"license": "MIT"
++		},
++		"node_modules/depd": {
++			"version": "2.0.0",
++			"license": "MIT",
++			"engines": {
++				"node": ">= 0.8"
++			}
++		},
++		"node_modules/detect-libc": {
++			"version": "2.0.1",
++			"license": "Apache-2.0",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/emoji-regex": {
++			"version": "8.0.0",
++			"license": "MIT"
++		},
++		"node_modules/escalade": {
++			"version": "3.1.1",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=6"
++			}
++		},
++		"node_modules/express-session": {
++			"version": "1.17.3",
++			"license": "MIT",
++			"dependencies": {
++				"cookie": "0.4.2",
++				"cookie-signature": "1.0.6",
++				"debug": "2.6.9",
++				"depd": "~2.0.0",
++				"on-headers": "~1.0.2",
++				"parseurl": "~1.3.3",
++				"safe-buffer": "5.2.1",
++				"uid-safe": "~2.1.5"
++			},
++			"engines": {
++				"node": ">= 0.8.0"
++			}
++		},
++		"node_modules/fill-range": {
++			"version": "7.0.1",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"to-regex-range": "^5.0.1"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/fs-minipass": {
++			"version": "2.1.0",
++			"license": "ISC",
++			"dependencies": {
++				"minipass": "^3.0.0"
++			},
++			"engines": {
++				"node": ">= 8"
++			}
++		},
++		"node_modules/fs-minipass/node_modules/minipass": {
++			"version": "3.3.6",
++			"license": "ISC",
++			"dependencies": {
++				"yallist": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/fs.realpath": {
++			"version": "1.0.0",
++			"license": "ISC"
++		},
++		"node_modules/fsevents": {
++			"version": "2.3.2",
++			"dev": true,
++			"license": "MIT",
++			"optional": true,
++			"os": [
++				"darwin"
++			],
++			"engines": {
++				"node": "^8.16.0 || ^10.6.0 || >=11.0.0"
++			}
++		},
++		"node_modules/gauge": {
++			"version": "3.0.2",
++			"license": "ISC",
++			"dependencies": {
++				"aproba": "^1.0.3 || ^2.0.0",
++				"color-support": "^1.1.2",
++				"console-control-strings": "^1.0.0",
++				"has-unicode": "^2.0.1",
++				"object-assign": "^4.1.1",
++				"signal-exit": "^3.0.0",
++				"string-width": "^4.2.3",
++				"strip-ansi": "^6.0.1",
++				"wide-align": "^1.1.2"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/get-caller-file": {
++			"version": "2.0.5",
++			"dev": true,
++			"license": "ISC",
++			"engines": {
++				"node": "6.* || 8.* || >= 10.*"
++			}
++		},
++		"node_modules/glob": {
++			"version": "7.2.3",
++			"license": "ISC",
++			"dependencies": {
++				"fs.realpath": "^1.0.0",
++				"inflight": "^1.0.4",
++				"inherits": "2",
++				"minimatch": "^3.1.1",
++				"once": "^1.3.0",
++				"path-is-absolute": "^1.0.0"
++			},
++			"engines": {
++				"node": "*"
++			},
++			"funding": {
++				"url": "https://github.com/sponsors/isaacs"
++			}
++		},
++		"node_modules/glob-parent": {
++			"version": "5.1.2",
++			"dev": true,
++			"license": "ISC",
++			"dependencies": {
++				"is-glob": "^4.0.1"
++			},
++			"engines": {
++				"node": ">= 6"
++			}
++		},
++		"node_modules/has-flag": {
++			"version": "4.0.0",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/has-unicode": {
++			"version": "2.0.1",
++			"license": "ISC"
++		},
++		"node_modules/https-proxy-agent": {
++			"version": "5.0.1",
++			"license": "MIT",
++			"dependencies": {
++				"agent-base": "6",
++				"debug": "4"
++			},
++			"engines": {
++				"node": ">= 6"
++			}
++		},
++		"node_modules/https-proxy-agent/node_modules/debug": {
++			"version": "4.3.4",
++			"license": "MIT",
++			"dependencies": {
++				"ms": "2.1.2"
++			},
++			"engines": {
++				"node": ">=6.0"
++			},
++			"peerDependenciesMeta": {
++				"supports-color": {
++					"optional": true
++				}
++			}
++		},
++		"node_modules/https-proxy-agent/node_modules/ms": {
++			"version": "2.1.2",
++			"license": "MIT"
++		},
++		"node_modules/ignore-by-default": {
++			"version": "1.0.1",
++			"dev": true,
++			"license": "ISC"
++		},
++		"node_modules/inflight": {
++			"version": "1.0.6",
++			"license": "ISC",
++			"dependencies": {
++				"once": "^1.3.0",
++				"wrappy": "1"
++			}
++		},
++		"node_modules/inherits": {
++			"version": "2.0.4",
++			"license": "ISC"
++		},
++		"node_modules/is-binary-path": {
++			"version": "2.1.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"binary-extensions": "^2.0.0"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/is-extglob": {
++			"version": "2.1.1",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/is-fullwidth-code-point": {
++			"version": "3.0.0",
++			"license": "MIT",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/is-glob": {
++			"version": "4.0.3",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"is-extglob": "^2.1.1"
++			},
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/is-number": {
++			"version": "7.0.0",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.12.0"
++			}
++		},
++		"node_modules/lodash": {
++			"version": "4.17.21",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/lru-cache": {
++			"version": "6.0.0",
++			"license": "ISC",
++			"dependencies": {
++				"yallist": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/make-dir": {
++			"version": "3.1.0",
++			"license": "MIT",
++			"dependencies": {
++				"semver": "^6.0.0"
++			},
++			"engines": {
++				"node": ">=8"
++			},
++			"funding": {
++				"url": "https://github.com/sponsors/sindresorhus"
++			}
++		},
++		"node_modules/make-dir/node_modules/semver": {
++			"version": "6.3.0",
++			"license": "ISC",
++			"bin": {
++				"semver": "bin/semver.js"
++			}
++		},
++		"node_modules/minimatch": {
++			"version": "3.1.2",
++			"license": "ISC",
++			"dependencies": {
++				"brace-expansion": "^1.1.7"
++			},
++			"engines": {
++				"node": "*"
++			}
++		},
++		"node_modules/minipass": {
++			"version": "4.2.8",
++			"license": "ISC",
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/minizlib": {
++			"version": "2.1.2",
++			"license": "MIT",
++			"dependencies": {
++				"minipass": "^3.0.0",
++				"yallist": "^4.0.0"
++			},
++			"engines": {
++				"node": ">= 8"
++			}
++		},
++		"node_modules/minizlib/node_modules/minipass": {
++			"version": "3.3.6",
++			"license": "ISC",
++			"dependencies": {
++				"yallist": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/mkdirp": {
++			"version": "1.0.4",
++			"license": "MIT",
++			"bin": {
++				"mkdirp": "bin/cmd.js"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/ms": {
++			"version": "2.0.0",
++			"license": "MIT"
++		},
++		"node_modules/node-addon-api": {
++			"version": "5.1.0",
++			"license": "MIT"
++		},
++		"node_modules/node-fetch": {
++			"version": "2.6.9",
++			"license": "MIT",
++			"dependencies": {
++				"whatwg-url": "^5.0.0"
++			},
++			"engines": {
++				"node": "4.x || >=6.0.0"
++			},
++			"peerDependencies": {
++				"encoding": "^0.1.0"
++			},
++			"peerDependenciesMeta": {
++				"encoding": {
++					"optional": true
++				}
++			}
++		},
++		"node_modules/nodemon": {
++			"version": "2.0.22",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"chokidar": "^3.5.2",
++				"debug": "^3.2.7",
++				"ignore-by-default": "^1.0.1",
++				"minimatch": "^3.1.2",
++				"pstree.remy": "^1.1.8",
++				"semver": "^5.7.1",
++				"simple-update-notifier": "^1.0.7",
++				"supports-color": "^5.5.0",
++				"touch": "^3.1.0",
++				"undefsafe": "^2.0.5"
++			},
++			"bin": {
++				"nodemon": "bin/nodemon.js"
++			},
++			"engines": {
++				"node": ">=8.10.0"
++			},
++			"funding": {
++				"type": "opencollective",
++				"url": "https://opencollective.com/nodemon"
++			}
++		},
++		"node_modules/nodemon/node_modules/debug": {
++			"version": "3.2.7",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"ms": "^2.1.1"
++			}
++		},
++		"node_modules/nodemon/node_modules/has-flag": {
++			"version": "3.0.0",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=4"
++			}
++		},
++		"node_modules/nodemon/node_modules/ms": {
++			"version": "2.1.3",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/nodemon/node_modules/semver": {
++			"version": "5.7.1",
++			"dev": true,
++			"license": "ISC",
++			"bin": {
++				"semver": "bin/semver"
++			}
++		},
++		"node_modules/nodemon/node_modules/supports-color": {
++			"version": "5.5.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"has-flag": "^3.0.0"
++			},
++			"engines": {
++				"node": ">=4"
++			}
++		},
++		"node_modules/nopt": {
++			"version": "5.0.0",
++			"license": "ISC",
++			"dependencies": {
++				"abbrev": "1"
++			},
++			"bin": {
++				"nopt": "bin/nopt.js"
++			},
++			"engines": {
++				"node": ">=6"
++			}
++		},
++		"node_modules/normalize-path": {
++			"version": "3.0.0",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/npmlog": {
++			"version": "5.0.1",
++			"license": "ISC",
++			"dependencies": {
++				"are-we-there-yet": "^2.0.0",
++				"console-control-strings": "^1.1.0",
++				"gauge": "^3.0.0",
++				"set-blocking": "^2.0.0"
++			}
++		},
++		"node_modules/object-assign": {
++			"version": "4.1.1",
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/on-headers": {
++			"version": "1.0.2",
++			"license": "MIT",
++			"engines": {
++				"node": ">= 0.8"
++			}
++		},
++		"node_modules/once": {
++			"version": "1.4.0",
++			"license": "ISC",
++			"dependencies": {
++				"wrappy": "1"
++			}
++		},
++		"node_modules/parseurl": {
++			"version": "1.3.3",
++			"license": "MIT",
++			"engines": {
++				"node": ">= 0.8"
++			}
++		},
++		"node_modules/path-is-absolute": {
++			"version": "1.0.1",
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/picomatch": {
++			"version": "2.3.1",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=8.6"
++			},
++			"funding": {
++				"url": "https://github.com/sponsors/jonschlinkert"
++			}
++		},
++		"node_modules/pstree.remy": {
++			"version": "1.1.8",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/random-bytes": {
++			"version": "1.0.0",
++			"license": "MIT",
++			"engines": {
++				"node": ">= 0.8"
++			}
++		},
++		"node_modules/readable-stream": {
++			"version": "3.6.2",
++			"license": "MIT",
++			"dependencies": {
++				"inherits": "^2.0.3",
++				"string_decoder": "^1.1.1",
++				"util-deprecate": "^1.0.1"
++			},
++			"engines": {
++				"node": ">= 6"
++			}
++		},
++		"node_modules/readdirp": {
++			"version": "3.6.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"picomatch": "^2.2.1"
++			},
++			"engines": {
++				"node": ">=8.10.0"
++			}
++		},
++		"node_modules/require-directory": {
++			"version": "2.1.1",
++			"dev": true,
++			"license": "MIT",
++			"engines": {
++				"node": ">=0.10.0"
++			}
++		},
++		"node_modules/rimraf": {
++			"version": "3.0.2",
++			"license": "ISC",
++			"dependencies": {
++				"glob": "^7.1.3"
++			},
++			"bin": {
++				"rimraf": "bin.js"
++			},
++			"funding": {
++				"url": "https://github.com/sponsors/isaacs"
++			}
++		},
++		"node_modules/rxjs": {
++			"version": "7.8.0",
++			"dev": true,
++			"license": "Apache-2.0",
++			"dependencies": {
++				"tslib": "^2.1.0"
++			}
++		},
++		"node_modules/safe-buffer": {
++			"version": "5.2.1",
++			"funding": [
++				{
++					"type": "github",
++					"url": "https://github.com/sponsors/feross"
++				},
++				{
++					"type": "patreon",
++					"url": "https://www.patreon.com/feross"
++				},
++				{
++					"type": "consulting",
++					"url": "https://feross.org/support"
++				}
++			],
++			"license": "MIT"
++		},
++		"node_modules/semver": {
++			"version": "7.5.0",
++			"license": "ISC",
++			"dependencies": {
++				"lru-cache": "^6.0.0"
++			},
++			"bin": {
++				"semver": "bin/semver.js"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/set-blocking": {
++			"version": "2.0.0",
++			"license": "ISC"
++		},
++		"node_modules/shell-quote": {
++			"version": "1.8.1",
++			"dev": true,
++			"license": "MIT",
++			"funding": {
++				"url": "https://github.com/sponsors/ljharb"
++			}
++		},
++		"node_modules/signal-exit": {
++			"version": "3.0.7",
++			"license": "ISC"
++		},
++		"node_modules/simple-update-notifier": {
++			"version": "1.1.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"semver": "~7.0.0"
++			},
++			"engines": {
++				"node": ">=8.10.0"
++			}
++		},
++		"node_modules/simple-update-notifier/node_modules/semver": {
++			"version": "7.0.0",
++			"dev": true,
++			"license": "ISC",
++			"bin": {
++				"semver": "bin/semver.js"
++			}
++		},
++		"node_modules/spawn-command": {
++			"version": "0.0.2-1",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/string_decoder": {
++			"version": "1.3.0",
++			"license": "MIT",
++			"dependencies": {
++				"safe-buffer": "~5.2.0"
++			}
++		},
++		"node_modules/string-width": {
++			"version": "4.2.3",
++			"license": "MIT",
++			"dependencies": {
++				"emoji-regex": "^8.0.0",
++				"is-fullwidth-code-point": "^3.0.0",
++				"strip-ansi": "^6.0.1"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/strip-ansi": {
++			"version": "6.0.1",
++			"license": "MIT",
++			"dependencies": {
++				"ansi-regex": "^5.0.1"
++			},
++			"engines": {
++				"node": ">=8"
++			}
++		},
++		"node_modules/supports-color": {
++			"version": "8.1.1",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"has-flag": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=10"
++			},
++			"funding": {
++				"url": "https://github.com/chalk/supports-color?sponsor=1"
++			}
++		},
++		"node_modules/tar": {
++			"version": "6.1.13",
++			"license": "ISC",
++			"dependencies": {
++				"chownr": "^2.0.0",
++				"fs-minipass": "^2.0.0",
++				"minipass": "^4.0.0",
++				"minizlib": "^2.1.1",
++				"mkdirp": "^1.0.3",
++				"yallist": "^4.0.0"
++			},
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/to-regex-range": {
++			"version": "5.0.1",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"is-number": "^7.0.0"
++			},
++			"engines": {
++				"node": ">=8.0"
++			}
++		},
++		"node_modules/touch": {
++			"version": "3.1.0",
++			"dev": true,
++			"license": "ISC",
++			"dependencies": {
++				"nopt": "~1.0.10"
++			},
++			"bin": {
++				"nodetouch": "bin/nodetouch.js"
++			}
++		},
++		"node_modules/touch/node_modules/nopt": {
++			"version": "1.0.10",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"abbrev": "1"
++			},
++			"bin": {
++				"nopt": "bin/nopt.js"
++			}
++		},
++		"node_modules/tr46": {
++			"version": "0.0.3",
++			"license": "MIT"
++		},
++		"node_modules/tree-kill": {
++			"version": "1.2.2",
++			"dev": true,
++			"license": "MIT",
++			"bin": {
++				"tree-kill": "cli.js"
++			}
++		},
++		"node_modules/tslib": {
++			"version": "2.5.0",
++			"dev": true,
++			"license": "0BSD"
++		},
++		"node_modules/typescript": {
++			"version": "4.9.5",
++			"dev": true,
++			"license": "Apache-2.0",
++			"bin": {
++				"tsc": "bin/tsc",
++				"tsserver": "bin/tsserver"
++			},
++			"engines": {
++				"node": ">=4.2.0"
++			}
++		},
++		"node_modules/uid-safe": {
++			"version": "2.1.5",
++			"license": "MIT",
++			"dependencies": {
++				"random-bytes": "~1.0.0"
++			},
++			"engines": {
++				"node": ">= 0.8"
++			}
++		},
++		"node_modules/undefsafe": {
++			"version": "2.0.5",
++			"dev": true,
++			"license": "MIT"
++		},
++		"node_modules/util-deprecate": {
++			"version": "1.0.2",
++			"license": "MIT"
++		},
++		"node_modules/uuid": {
++			"version": "9.0.0",
++			"license": "MIT",
++			"bin": {
++				"uuid": "dist/bin/uuid"
++			}
++		},
++		"node_modules/uuidv4": {
++			"version": "6.2.13",
++			"license": "MIT",
++			"dependencies": {
++				"@types/uuid": "8.3.4",
++				"uuid": "8.3.2"
++			}
++		},
++		"node_modules/uuidv4/node_modules/@types/uuid": {
++			"version": "8.3.4",
++			"license": "MIT"
++		},
++		"node_modules/uuidv4/node_modules/uuid": {
++			"version": "8.3.2",
++			"license": "MIT",
++			"bin": {
++				"uuid": "dist/bin/uuid"
++			}
++		},
++		"node_modules/webidl-conversions": {
++			"version": "3.0.1",
++			"license": "BSD-2-Clause"
++		},
++		"node_modules/whatwg-url": {
++			"version": "5.0.0",
++			"license": "MIT",
++			"dependencies": {
++				"tr46": "~0.0.3",
++				"webidl-conversions": "^3.0.0"
++			}
++		},
++		"node_modules/wide-align": {
++			"version": "1.1.5",
++			"license": "ISC",
++			"dependencies": {
++				"string-width": "^1.0.2 || 2 || 3 || 4"
++			}
++		},
++		"node_modules/wrap-ansi": {
++			"version": "7.0.0",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"ansi-styles": "^4.0.0",
++				"string-width": "^4.1.0",
++				"strip-ansi": "^6.0.0"
++			},
++			"engines": {
++				"node": ">=10"
++			},
++			"funding": {
++				"url": "https://github.com/chalk/wrap-ansi?sponsor=1"
++			}
++		},
++		"node_modules/wrappy": {
++			"version": "1.0.2",
++			"license": "ISC"
++		},
++		"node_modules/y18n": {
++			"version": "5.0.8",
++			"dev": true,
++			"license": "ISC",
++			"engines": {
++				"node": ">=10"
++			}
++		},
++		"node_modules/yallist": {
++			"version": "4.0.0",
++			"license": "ISC"
++		},
++		"node_modules/yargs": {
++			"version": "17.7.1",
++			"dev": true,
++			"license": "MIT",
++			"dependencies": {
++				"cliui": "^8.0.1",
++				"escalade": "^3.1.1",
++				"get-caller-file": "^2.0.5",
++				"require-directory": "^2.1.1",
++				"string-width": "^4.2.3",
++				"y18n": "^5.0.5",
++				"yargs-parser": "^21.1.1"
++			},
++			"engines": {
++				"node": ">=12"
++			}
++		},
++		"node_modules/yargs-parser": {
++			"version": "21.1.1",
++			"dev": true,
++			"license": "ISC",
++			"engines": {
++				"node": ">=12"
++			}
++		}
++	},
++	"dependencies": {
++		"@mapbox/node-pre-gyp": {
++			"version": "1.0.10",
++			"requires": {
++				"detect-libc": "^2.0.0",
++				"https-proxy-agent": "^5.0.0",
++				"make-dir": "^3.1.0",
++				"node-fetch": "^2.6.7",
++				"nopt": "^5.0.0",
++				"npmlog": "^5.0.1",
++				"rimraf": "^3.0.2",
++				"semver": "^7.3.5",
++				"tar": "^6.1.11"
++			}
++		},
++		"@types/bcrypt": {
++			"version": "5.0.0",
++			"requires": {
++				"@types/node": "*"
++			}
++		},
++		"@types/body-parser": {
++			"version": "1.19.2",
++			"requires": {
++				"@types/connect": "*",
++				"@types/node": "*"
++			}
++		},
++		"@types/connect": {
++			"version": "3.4.35",
++			"requires": {
++				"@types/node": "*"
++			}
++		},
++		"@types/express": {
++			"version": "4.17.17",
++			"requires": {
++				"@types/body-parser": "*",
++				"@types/express-serve-static-core": "^4.17.33",
++				"@types/qs": "*",
++				"@types/serve-static": "*"
++			}
++		},
++		"@types/express-serve-static-core": {
++			"version": "4.17.34",
++			"requires": {
++				"@types/node": "*",
++				"@types/qs": "*",
++				"@types/range-parser": "*",
++				"@types/send": "*"
++			}
++		},
++		"@types/express-session": {
++			"version": "1.17.7",
++			"requires": {
++				"@types/express": "*"
++			}
++		},
++		"@types/mime": {
++			"version": "1.3.2"
++		},
++		"@types/node": {
++			"version": "18.16.1"
++		},
++		"@types/qs": {
++			"version": "6.9.7"
++		},
++		"@types/range-parser": {
++			"version": "1.2.4"
++		},
++		"@types/send": {
++			"version": "0.17.1",
++			"requires": {
++				"@types/mime": "^1",
++				"@types/node": "*"
++			}
++		},
++		"@types/serve-static": {
++			"version": "1.15.1",
++			"requires": {
++				"@types/mime": "*",
++				"@types/node": "*"
++			}
++		},
++		"@types/uuid": {
++			"version": "9.0.1"
++		},
++		"abbrev": {
++			"version": "1.1.1"
++		},
++		"agent-base": {
++			"version": "6.0.2",
++			"requires": {
++				"debug": "4"
++			},
++			"dependencies": {
++				"debug": {
++					"version": "4.3.4",
++					"requires": {
++						"ms": "2.1.2"
++					}
++				},
++				"ms": {
++					"version": "2.1.2"
++				}
++			}
++		},
++		"ansi-regex": {
++			"version": "5.0.1"
++		},
++		"ansi-styles": {
++			"version": "4.3.0",
++			"dev": true,
++			"requires": {
++				"color-convert": "^2.0.1"
++			}
++		},
++		"anymatch": {
++			"version": "3.1.3",
++			"dev": true,
++			"requires": {
++				"normalize-path": "^3.0.0",
++				"picomatch": "^2.0.4"
++			}
++		},
++		"aproba": {
++			"version": "2.0.0"
++		},
++		"are-we-there-yet": {
++			"version": "2.0.0",
++			"requires": {
++				"delegates": "^1.0.0",
++				"readable-stream": "^3.6.0"
++			}
++		},
++		"balanced-match": {
++			"version": "1.0.2"
++		},
++		"bcrypt": {
++			"version": "5.1.0",
++			"requires": {
++				"@mapbox/node-pre-gyp": "^1.0.10",
++				"node-addon-api": "^5.0.0"
++			}
++		},
++		"binary-extensions": {
++			"version": "2.2.0",
++			"dev": true
++		},
++		"brace-expansion": {
++			"version": "1.1.11",
++			"requires": {
++				"balanced-match": "^1.0.0",
++				"concat-map": "0.0.1"
++			}
++		},
++		"braces": {
++			"version": "3.0.2",
++			"dev": true,
++			"requires": {
++				"fill-range": "^7.0.1"
++			}
++		},
++		"chalk": {
++			"version": "4.1.2",
++			"dev": true,
++			"requires": {
++				"ansi-styles": "^4.1.0",
++				"supports-color": "^7.1.0"
++			},
++			"dependencies": {
++				"supports-color": {
++					"version": "7.2.0",
++					"dev": true,
++					"requires": {
++						"has-flag": "^4.0.0"
++					}
++				}
++			}
++		},
++		"chokidar": {
++			"version": "3.5.3",
++			"dev": true,
++			"requires": {
++				"anymatch": "~3.1.2",
++				"braces": "~3.0.2",
++				"fsevents": "~2.3.2",
++				"glob-parent": "~5.1.2",
++				"is-binary-path": "~2.1.0",
++				"is-glob": "~4.0.1",
++				"normalize-path": "~3.0.0",
++				"readdirp": "~3.6.0"
++			}
++		},
++		"chownr": {
++			"version": "2.0.0"
++		},
++		"cliui": {
++			"version": "8.0.1",
++			"dev": true,
++			"requires": {
++				"string-width": "^4.2.0",
++				"strip-ansi": "^6.0.1",
++				"wrap-ansi": "^7.0.0"
++			}
++		},
++		"color-convert": {
++			"version": "2.0.1",
++			"dev": true,
++			"requires": {
++				"color-name": "~1.1.4"
++			}
++		},
++		"color-name": {
++			"version": "1.1.4",
++			"dev": true
++		},
++		"color-support": {
++			"version": "1.1.3"
++		},
++		"concat-map": {
++			"version": "0.0.1"
++		},
++		"concurrently": {
++			"version": "7.6.0",
++			"dev": true,
++			"requires": {
++				"chalk": "^4.1.0",
++				"date-fns": "^2.29.1",
++				"lodash": "^4.17.21",
++				"rxjs": "^7.0.0",
++				"shell-quote": "^1.7.3",
++				"spawn-command": "^0.0.2-1",
++				"supports-color": "^8.1.0",
++				"tree-kill": "^1.2.2",
++				"yargs": "^17.3.1"
++			}
++		},
++		"console-control-strings": {
++			"version": "1.1.0"
++		},
++		"cookie": {
++			"version": "0.4.2"
++		},
++		"cookie-signature": {
++			"version": "1.0.6"
++		},
++		"customer-commons": {
++			"version": "file:../customer-commons"
++		},
++		"date-fns": {
++			"version": "2.29.3",
++			"dev": true
++		},
++		"debug": {
++			"version": "2.6.9",
++			"requires": {
++				"ms": "2.0.0"
++			}
++		},
++		"delegates": {
++			"version": "1.0.0"
++		},
++		"depd": {
++			"version": "2.0.0"
++		},
++		"detect-libc": {
++			"version": "2.0.1"
++		},
++		"emoji-regex": {
++			"version": "8.0.0"
++		},
++		"escalade": {
++			"version": "3.1.1",
++			"dev": true
++		},
++		"express-session": {
++			"version": "1.17.3",
++			"requires": {
++				"cookie": "0.4.2",
++				"cookie-signature": "1.0.6",
++				"debug": "2.6.9",
++				"depd": "~2.0.0",
++				"on-headers": "~1.0.2",
++				"parseurl": "~1.3.3",
++				"safe-buffer": "5.2.1",
++				"uid-safe": "~2.1.5"
++			}
++		},
++		"fill-range": {
++			"version": "7.0.1",
++			"dev": true,
++			"requires": {
++				"to-regex-range": "^5.0.1"
++			}
++		},
++		"fs-minipass": {
++			"version": "2.1.0",
++			"requires": {
++				"minipass": "^3.0.0"
++			},
++			"dependencies": {
++				"minipass": {
++					"version": "3.3.6",
++					"requires": {
++						"yallist": "^4.0.0"
++					}
++				}
++			}
++		},
++		"fs.realpath": {
++			"version": "1.0.0"
++		},
++		"fsevents": {
++			"version": "2.3.2",
++			"dev": true,
++			"optional": true
++		},
++		"gauge": {
++			"version": "3.0.2",
++			"requires": {
++				"aproba": "^1.0.3 || ^2.0.0",
++				"color-support": "^1.1.2",
++				"console-control-strings": "^1.0.0",
++				"has-unicode": "^2.0.1",
++				"object-assign": "^4.1.1",
++				"signal-exit": "^3.0.0",
++				"string-width": "^4.2.3",
++				"strip-ansi": "^6.0.1",
++				"wide-align": "^1.1.2"
++			}
++		},
++		"get-caller-file": {
++			"version": "2.0.5",
++			"dev": true
++		},
++		"glob": {
++			"version": "7.2.3",
++			"requires": {
++				"fs.realpath": "^1.0.0",
++				"inflight": "^1.0.4",
++				"inherits": "2",
++				"minimatch": "^3.1.1",
++				"once": "^1.3.0",
++				"path-is-absolute": "^1.0.0"
++			}
++		},
++		"glob-parent": {
++			"version": "5.1.2",
++			"dev": true,
++			"requires": {
++				"is-glob": "^4.0.1"
++			}
++		},
++		"has-flag": {
++			"version": "4.0.0",
++			"dev": true
++		},
++		"has-unicode": {
++			"version": "2.0.1"
++		},
++		"https-proxy-agent": {
++			"version": "5.0.1",
++			"requires": {
++				"agent-base": "6",
++				"debug": "4"
++			},
++			"dependencies": {
++				"debug": {
++					"version": "4.3.4",
++					"requires": {
++						"ms": "2.1.2"
++					}
++				},
++				"ms": {
++					"version": "2.1.2"
++				}
++			}
++		},
++		"ignore-by-default": {
++			"version": "1.0.1",
++			"dev": true
++		},
++		"inflight": {
++			"version": "1.0.6",
++			"requires": {
++				"once": "^1.3.0",
++				"wrappy": "1"
++			}
++		},
++		"inherits": {
++			"version": "2.0.4"
++		},
++		"is-binary-path": {
++			"version": "2.1.0",
++			"dev": true,
++			"requires": {
++				"binary-extensions": "^2.0.0"
++			}
++		},
++		"is-extglob": {
++			"version": "2.1.1",
++			"dev": true
++		},
++		"is-fullwidth-code-point": {
++			"version": "3.0.0"
++		},
++		"is-glob": {
++			"version": "4.0.3",
++			"dev": true,
++			"requires": {
++				"is-extglob": "^2.1.1"
++			}
++		},
++		"is-number": {
++			"version": "7.0.0",
++			"dev": true
++		},
++		"lodash": {
++			"version": "4.17.21",
++			"dev": true
++		},
++		"lru-cache": {
++			"version": "6.0.0",
++			"requires": {
++				"yallist": "^4.0.0"
++			}
++		},
++		"make-dir": {
++			"version": "3.1.0",
++			"requires": {
++				"semver": "^6.0.0"
++			},
++			"dependencies": {
++				"semver": {
++					"version": "6.3.0"
++				}
++			}
++		},
++		"minimatch": {
++			"version": "3.1.2",
++			"requires": {
++				"brace-expansion": "^1.1.7"
++			}
++		},
++		"minipass": {
++			"version": "4.2.8"
++		},
++		"minizlib": {
++			"version": "2.1.2",
++			"requires": {
++				"minipass": "^3.0.0",
++				"yallist": "^4.0.0"
++			},
++			"dependencies": {
++				"minipass": {
++					"version": "3.3.6",
++					"requires": {
++						"yallist": "^4.0.0"
++					}
++				}
++			}
++		},
++		"mkdirp": {
++			"version": "1.0.4"
++		},
++		"ms": {
++			"version": "2.0.0"
++		},
++		"node-addon-api": {
++			"version": "5.1.0"
++		},
++		"node-fetch": {
++			"version": "2.6.9",
++			"requires": {
++				"whatwg-url": "^5.0.0"
++			}
++		},
++		"nodemon": {
++			"version": "2.0.22",
++			"dev": true,
++			"requires": {
++				"chokidar": "^3.5.2",
++				"debug": "^3.2.7",
++				"ignore-by-default": "^1.0.1",
++				"minimatch": "^3.1.2",
++				"pstree.remy": "^1.1.8",
++				"semver": "^5.7.1",
++				"simple-update-notifier": "^1.0.7",
++				"supports-color": "^5.5.0",
++				"touch": "^3.1.0",
++				"undefsafe": "^2.0.5"
++			},
++			"dependencies": {
++				"debug": {
++					"version": "3.2.7",
++					"dev": true,
++					"requires": {
++						"ms": "^2.1.1"
++					}
++				},
++				"has-flag": {
++					"version": "3.0.0",
++					"dev": true
++				},
++				"ms": {
++					"version": "2.1.3",
++					"dev": true
++				},
++				"semver": {
++					"version": "5.7.1",
++					"dev": true
++				},
++				"supports-color": {
++					"version": "5.5.0",
++					"dev": true,
++					"requires": {
++						"has-flag": "^3.0.0"
++					}
++				}
++			}
++		},
++		"nopt": {
++			"version": "5.0.0",
++			"requires": {
++				"abbrev": "1"
++			}
++		},
++		"normalize-path": {
++			"version": "3.0.0",
++			"dev": true
++		},
++		"npmlog": {
++			"version": "5.0.1",
++			"requires": {
++				"are-we-there-yet": "^2.0.0",
++				"console-control-strings": "^1.1.0",
++				"gauge": "^3.0.0",
++				"set-blocking": "^2.0.0"
++			}
++		},
++		"object-assign": {
++			"version": "4.1.1"
++		},
++		"on-headers": {
++			"version": "1.0.2"
++		},
++		"once": {
++			"version": "1.4.0",
++			"requires": {
++				"wrappy": "1"
++			}
++		},
++		"parseurl": {
++			"version": "1.3.3"
++		},
++		"path-is-absolute": {
++			"version": "1.0.1"
++		},
++		"picomatch": {
++			"version": "2.3.1",
++			"dev": true
++		},
++		"pstree.remy": {
++			"version": "1.1.8",
++			"dev": true
++		},
++		"random-bytes": {
++			"version": "1.0.0"
++		},
++		"readable-stream": {
++			"version": "3.6.2",
++			"requires": {
++				"inherits": "^2.0.3",
++				"string_decoder": "^1.1.1",
++				"util-deprecate": "^1.0.1"
++			}
++		},
++		"readdirp": {
++			"version": "3.6.0",
++			"dev": true,
++			"requires": {
++				"picomatch": "^2.2.1"
++			}
++		},
++		"require-directory": {
++			"version": "2.1.1",
++			"dev": true
++		},
++		"rimraf": {
++			"version": "3.0.2",
++			"requires": {
++				"glob": "^7.1.3"
++			}
++		},
++		"rxjs": {
++			"version": "7.8.0",
++			"dev": true,
++			"requires": {
++				"tslib": "^2.1.0"
++			}
++		},
++		"safe-buffer": {
++			"version": "5.2.1"
++		},
++		"semver": {
++			"version": "7.5.0",
++			"requires": {
++				"lru-cache": "^6.0.0"
++			}
++		},
++		"set-blocking": {
++			"version": "2.0.0"
++		},
++		"shell-quote": {
++			"version": "1.8.1",
++			"dev": true
++		},
++		"signal-exit": {
++			"version": "3.0.7"
++		},
++		"simple-update-notifier": {
++			"version": "1.1.0",
++			"dev": true,
++			"requires": {
++				"semver": "~7.0.0"
++			},
++			"dependencies": {
++				"semver": {
++					"version": "7.0.0",
++					"dev": true
++				}
++			}
++		},
++		"spawn-command": {
++			"version": "0.0.2-1",
++			"dev": true
++		},
++		"string_decoder": {
++			"version": "1.3.0",
++			"requires": {
++				"safe-buffer": "~5.2.0"
++			}
++		},
++		"string-width": {
++			"version": "4.2.3",
++			"requires": {
++				"emoji-regex": "^8.0.0",
++				"is-fullwidth-code-point": "^3.0.0",
++				"strip-ansi": "^6.0.1"
++			}
++		},
++		"strip-ansi": {
++			"version": "6.0.1",
++			"requires": {
++				"ansi-regex": "^5.0.1"
++			}
++		},
++		"supports-color": {
++			"version": "8.1.1",
++			"dev": true,
++			"requires": {
++				"has-flag": "^4.0.0"
++			}
++		},
++		"tar": {
++			"version": "6.1.13",
++			"requires": {
++				"chownr": "^2.0.0",
++				"fs-minipass": "^2.0.0",
++				"minipass": "^4.0.0",
++				"minizlib": "^2.1.1",
++				"mkdirp": "^1.0.3",
++				"yallist": "^4.0.0"
++			}
++		},
++		"to-regex-range": {
++			"version": "5.0.1",
++			"dev": true,
++			"requires": {
++				"is-number": "^7.0.0"
++			}
++		},
++		"touch": {
++			"version": "3.1.0",
++			"dev": true,
++			"requires": {
++				"nopt": "~1.0.10"
++			},
++			"dependencies": {
++				"nopt": {
++					"version": "1.0.10",
++					"dev": true,
++					"requires": {
++						"abbrev": "1"
++					}
++				}
++			}
++		},
++		"tr46": {
++			"version": "0.0.3"
++		},
++		"tree-kill": {
++			"version": "1.2.2",
++			"dev": true
++		},
++		"tslib": {
++			"version": "2.5.0",
++			"dev": true
++		},
++		"typescript": {
++			"version": "4.9.5",
++			"dev": true
++		},
++		"uid-safe": {
++			"version": "2.1.5",
++			"requires": {
++				"random-bytes": "~1.0.0"
++			}
++		},
++		"undefsafe": {
++			"version": "2.0.5",
++			"dev": true
++		},
++		"util-deprecate": {
++			"version": "1.0.2"
++		},
++		"uuid": {
++			"version": "9.0.0"
++		},
++		"uuidv4": {
++			"version": "6.2.13",
++			"requires": {
++				"@types/uuid": "8.3.4",
++				"uuid": "8.3.2"
++			},
++			"dependencies": {
++				"@types/uuid": {
++					"version": "8.3.4"
++				},
++				"uuid": {
++					"version": "8.3.2"
++				}
++			}
++		},
++		"webidl-conversions": {
++			"version": "3.0.1"
++		},
++		"whatwg-url": {
++			"version": "5.0.0",
++			"requires": {
++				"tr46": "~0.0.3",
++				"webidl-conversions": "^3.0.0"
++			}
++		},
++		"wide-align": {
++			"version": "1.1.5",
++			"requires": {
++				"string-width": "^1.0.2 || 2 || 3 || 4"
++			}
++		},
++		"wrap-ansi": {
++			"version": "7.0.0",
++			"dev": true,
++			"requires": {
++				"ansi-styles": "^4.0.0",
++				"string-width": "^4.1.0",
++				"strip-ansi": "^6.0.0"
++			}
++		},
++		"wrappy": {
++			"version": "1.0.2"
++		},
++		"y18n": {
++			"version": "5.0.8",
++			"dev": true
++		},
++		"yallist": {
++			"version": "4.0.0"
++		},
++		"yargs": {
++			"version": "17.7.1",
++			"dev": true,
++			"requires": {
++				"cliui": "^8.0.1",
++				"escalade": "^3.1.1",
++				"get-caller-file": "^2.0.5",
++				"require-directory": "^2.1.1",
++				"string-width": "^4.2.3",
++				"y18n": "^5.0.5",
++				"yargs-parser": "^21.1.1"
++			}
++		},
++		"yargs-parser": {
++			"version": "21.1.1",
++			"dev": true
++		}
++	}
++}
+diff --git a/customer-service/package.json b/customer-service/package.json
+index 22d8cd3..cca77c0 100644
+--- a/customer-service/package.json
++++ b/customer-service/package.json
+@@ -1,29 +1,33 @@
+ {
+-	"name": "@trading212-lite/customer-service",
+-	"version": "1.0.0",
+-	"description": "",
+-	"main": "index.js",
+-	"scripts": {
+-		"start": "tsc -b && concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
+-		"test": "echo \"Error: no test specified\" && exit 1"
+-	},
+-	"author": "",
+-	"license": "ISC",
+-	"devDependencies": {
+-		"@types/express": "^4.17.17",
+-		"@types/node": "^18.11.19",
+-		"concurrently": "^7.6.0",
+-		"nodemon": "^2.0.20",
+-		"typescript": "^4.9.5"
+-	},
+-	"dependencies": {
+-		"@types/bcrypt": "^5.0.0",
+-		"@types/express-session": "^1.17.7",
+-		"@types/uuid": "^9.0.1",
+-		"bcrypt": "^5.1.0",
+-		"customer-commons": "../customer-commons",
+-		"express-session": "^1.17.3",
+-		"uuid": "^9.0.0",
+-		"uuidv4": "^6.2.13"
+-	}
++  "name": "@trading212-lite/customer-service",
++  "version": "1.0.0",
++  "description": "",
++  "main": "./dist/index.js",
++  "scripts": {
++    "build": "tsc -b",
++    "start": "npm run build --workspaces --if-present && concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
++    "test": "echo \"Error: no test specified\" && exit 1"
++  },
++  "author": "",
++  "license": "ISC",
++  "devDependencies": {
++    "@types/express": "^4.17.17",
++    "@types/node": "^18.11.19",
++    "concurrently": "^7.6.0",
++    "nodemon": "^2.0.20",
++    "typescript": "^4.9.5"
++  },
++  "dependencies": {
++    "@types/bcrypt": "^5.0.0",
++    "@types/express-session": "^1.17.7",
++    "@types/uuid": "^9.0.1",
++    "bcrypt": "^5.1.0",
++    "customer-commons": "../customer-commons",
++    "express-session": "^1.17.3",
++    "uuid": "^9.0.0",
++    "uuidv4": "^6.2.13"
++  },
++  "workspaces": [
++    "../customer-commons"
++  ]
+ }

@@ -282,7 +282,7 @@ export function SignUpFlow() {
       borderRadius: StyleConstants.BORDER_RADIUS,
       justifyContent: "center",
     }),
-    [currentStep]
+    []
   );
 
   return (
