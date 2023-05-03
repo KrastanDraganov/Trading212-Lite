@@ -1,3 +1,8 @@
+import {
+  containsOnlyLatinCharacters,
+  isPasswordSecure,
+  isValidEmail,
+} from "customer-commons";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -110,6 +115,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setGivenNames(text);
         }}
+        inputValidator={containsOnlyLatinCharacters}
         textInputProps={{
           textContentType: "name",
           autoCapitalize: "words",
@@ -124,6 +130,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setLastName(text);
         }}
+        inputValidator={containsOnlyLatinCharacters}
         textInputProps={{
           textContentType: "name",
           autoCapitalize: "words",
@@ -201,6 +208,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setEmail(text);
         }}
+        inputValidator={isValidEmail}
         textInputProps={{
           textContentType: "emailAddress",
         }}
@@ -214,6 +222,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setPassword(text);
         }}
+        inputValidator={isPasswordSecure}
         textInputProps={{
           textContentType: "password",
         }}

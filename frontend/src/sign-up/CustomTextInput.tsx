@@ -1,3 +1,4 @@
+import { ValidationT } from "customer-commons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -37,13 +38,21 @@ export function CustomTextInput(props: {
   style?: StyleProp<ViewStyle>;
   textInputProps?: Omit<React.ComponentProps<typeof TextInput>, "onChangeText">;
   onChangeTextProp: (text: string) => void;
+  inputValidator: (text: string) => ValidationT;
 }) {
   const labelAnimationValue = useRef(new Animated.Value(0)).current;
   const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
 
+  const errorAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorAnimation = useRef<(() => void) | undefined>(undefined);
+
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     return () => {
       cancelLabelAnimation.current?.();
+      cancelErrorAnimation.current?.();
     };
   }, []);
 
@@ -59,6 +68,41 @@ export function CustomTextInput(props: {
 
     animation.start();
   }, []);
+
+  const performErrorAnimation = useCallback(() => {
+    setIsError(true);
+
+    const animation = Animated.sequence([
+      Animated.timing(errorAnimationValue, {
+        toValue: 10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorAnimationValue, {
+        toValue: -10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorAnimationValue, {
+        toValue: 10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorAnimationValue, {
+        toValue: 0,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    cancelErrorAnimation.current = animation.stop;
+
+    animation.start();
+  }, [isError]);
 
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState("");
@@ -82,7 +126,14 @@ export function CustomTextInput(props: {
     if (text.length === 0) {
       performLabelAnimation(labelAnimationTopToBottom);
     }
-  }, [text]);
+
+    const validation = props.inputValidator(text);
+
+    if (!validation.passed) {
+      setErrorMessage(validation.errorType!);
+      performErrorAnimation();
+    }
+  }, [text, props.inputValidator, isError]);
 
   const onButtonPressIn = useCallback(() => {
     setIsButtonBeingPressed(true);
@@ -92,10 +143,15 @@ export function CustomTextInput(props: {
     setIsButtonBeingPressed(false);
   }, []);
 
-  const onChangeText = useCallback((newText: string) => {
-    props.onChangeTextProp(newText);
-    setText(newText);
-  }, []);
+  const onChangeText = useCallback(
+    (newText: string) => {
+      props.onChangeTextProp(newText);
+      setText(newText);
+
+      setIsError(false);
+    },
+    [props.onChangeTextProp, isError]
+  );
 
   const clearInputText = useCallback(() => {
     props.onChangeTextProp("");
@@ -103,17 +159,20 @@ export function CustomTextInput(props: {
 
     setIsFocused(false);
     performLabelAnimation(labelAnimationTopToBottom);
-  }, []);
+
+    setIsError(false);
+  }, [props.onChangeTextProp]);
 
   const changePasswordVisibility = useCallback(() => {
     setIsPasswordVisible(!isPasswordVisible);
   }, [isPasswordVisible]);
 
   const wholeContainerStyle = useMemo(
-    () => [
+    (): StyleProp<ViewStyle> | Animated.Animated => [
       {
         marginLeft: StyleConstants.MARGIN,
         marginRight: StyleConstants.MARGIN,
+        transform: [{ translateX: errorAnimationValue }],
       },
       props.style,
     ],
@@ -161,11 +220,11 @@ export function CustomTextInput(props: {
         inputRange: [0, 1],
         outputRange: [labelBlurredMargin, labelFocusedMargin],
       }),
-      color: ColorConstants.GRAY,
+      color: isError ? ColorConstants.RED : ColorConstants.GRAY,
       fontSize: labelFontSize,
       fontWeight: labelFontWeight,
     }),
-    []
+    [isError]
   );
 
   const clearInputButtonImageStyle = useMemo(
@@ -198,12 +257,16 @@ export function CustomTextInput(props: {
     [isPasswordVisible, isButtonBeingPressed]
   );
 
-  const blackLineStyle = useMemo(
+  const indicatorLineStyle = useMemo(
     () => ({
-      backgroundColor: isFocused ? ColorConstants.BLUE : ColorConstants.GRAY,
+      backgroundColor: isFocused
+        ? ColorConstants.BLUE
+        : isError
+        ? ColorConstants.RED
+        : ColorConstants.GRAY,
       height: StyleSheet.hairlineWidth,
     }),
-    [isFocused]
+    [isFocused, isError]
   );
 
   const clearInputButton = useCallback(() => {
@@ -246,10 +309,12 @@ export function CustomTextInput(props: {
   }, [text, isPasswordVisible, isButtonBeingPressed]);
 
   return (
-    <View style={wholeContainerStyle}>
+    <Animated.View style={wholeContainerStyle}>
       <View style={textInputAndButtonContainerStyle}>
         <View style={textInputAndLabelContainerStyle}>
-          <Animated.Text style={labelStyle}>{props.label}</Animated.Text>
+          <Animated.Text style={labelStyle}>
+            {isError ? errorMessage : props.label}
+          </Animated.Text>
 
           <TextInput
             {...props.textInputProps}
@@ -265,7 +330,7 @@ export function CustomTextInput(props: {
         {isPassword.current ? viewPasswordButton() : clearInputButton()}
       </View>
 
-      <View style={blackLineStyle} />
-    </View>
+      <View style={indicatorLineStyle} />
+    </Animated.View>
   );
 }
