@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import cors from "cors";
 import {
 	containsOnlyLatinCharacters,
 	CountryT,
@@ -30,6 +31,7 @@ declare module "express-session" {
 CustomersFileRepository.init();
 
 app.use(express.json());
+app.use(cors());
 app.use(session(sessionConfiguration));
 
 app.get("/", (req: Request, res: Response) => {
@@ -38,7 +40,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/countries", (req: Request, res: Response) => {
-	res.header("Access-Control-Allow-Origin", "*").json(Countries);
+	res.json(Countries);
 });
 
 app.post("/customers", async (req: Request, res: Response) => {
@@ -52,7 +54,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 		return res.status(400).json({ type: "MissingGivenNames" });
 	}
 
-	if (!containsOnlyLatinCharacters(givenNames)) {
+	if (!containsOnlyLatinCharacters(givenNames).passed) {
 		return res.status(400).json({ type: "InvalidGivenNames" });
 	}
 
@@ -62,7 +64,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 		return res.status(400).json({ type: "MissingLastName" });
 	}
 
-	if (!containsOnlyLatinCharacters(lastName)) {
+	if (!containsOnlyLatinCharacters(lastName).passed) {
 		return res.status(400).json({ type: "InvalidLastName" });
 	}
 
@@ -107,7 +109,8 @@ app.post("/customers", async (req: Request, res: Response) => {
 	if (!password) {
 		return res.status(400).json({ type: "MissingPassword" });
 	}
-	if (!isPasswordSecure(password)) {
+
+	if (!isPasswordSecure(password).passed) {
 		return res.status(400).json({ type: "PasswordNotSecureEnough" });
 	}
 
