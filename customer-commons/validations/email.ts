@@ -7,5 +7,5 @@ const emailRegexSimple = new RegExp(
 export function isValidEmail(value: string): ValidationT {
 	return emailRegexSimple.test(value)
 		? { passed: true }
-		: { passed: false, errorType: "invalid-email" };
+		: { passed: false, errorType: ["invalid-email"] };
 }

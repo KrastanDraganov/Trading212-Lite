@@ -21,21 +21,29 @@ function containsLowercaseLetter(password: string): boolean {
 }
 
 export function isPasswordSecure(password: string): ValidationT {
+	let errors = [];
+
 	if (!containsEightCharacters(password)) {
-		return { passed: false, errorType: "not-enough-characters" };
+		errors.push("not-enough-characters");
 	}
 
 	if (!containsDigit(password)) {
-		return { passed: false, errorType: "missing-digit" };
+		errors.push("missing-digit");
 	}
 
 	if (!containsUppercaseLetter(password)) {
-		return { passed: false, errorType: "missing-uppercase-letter" };
+		errors.push("missing-uppercase-letter");
 	}
 
 	if (!containsLowercaseLetter(password)) {
-		return { passed: false, errorType: "missing-lowercase-letter" };
+		errors.push("missing-lowercase-letter");
 	}
 
-	return { passed: true };
+	if (errors.length === 0) {
+		return { passed: true };
+	}
+
+	errors.unshift("invalid-password");
+
+	return { passed: false, errorType: errors };
 }

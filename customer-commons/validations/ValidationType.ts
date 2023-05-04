@@ -9,5 +9,5 @@
 
 export type ValidationT = {
 	passed: boolean;
-	errorType?: string;
+	errorType?: string[];
 };
