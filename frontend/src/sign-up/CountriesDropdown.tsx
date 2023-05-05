@@ -47,7 +47,10 @@ const arrowIconHeight = 7;
 const arrowIconWidth = 14;
 const arrowIconButtonOffset = 20;
 
-export function CountriesDropdown(props: { countries: CountryT[] }) {
+export function CountriesDropdown(props: {
+  countries: CountryT[];
+  onCountryPress: (text: string) => void;
+}) {
   const dropDownFadeAnimation = useRef(new Animated.Value(0)).current;
 
   const cancelDropDownFadeAnimation = useRef<(() => void) | undefined>(
@@ -224,11 +227,15 @@ export function CountriesDropdown(props: { countries: CountryT[] }) {
     }
   }, [isCountriesListVisible]);
 
-  const onCountryPress = useCallback((countryName: string) => {
-    setSelectedCountry(countryName);
+  const onCountryPress = useCallback(
+    (countryName: string) => {
+      setSelectedCountry(countryName);
+      props.onCountryPress(countryName);
 
-    changeCountriesListVisibility(false);
-  }, []);
+      changeCountriesListVisibility(false);
+    },
+    [props.onCountryPress]
+  );
 
   const onCountryHover = useCallback((countryName: string) => {
     setHoveredCountry(countryName);

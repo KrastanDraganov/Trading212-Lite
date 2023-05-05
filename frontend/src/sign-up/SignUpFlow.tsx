@@ -2,6 +2,7 @@ import {
   containsOnlyLatinCharacters,
   isPasswordSecure,
   isValidEmail,
+  ValidationT,
 } from "customer-commons";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -42,6 +43,13 @@ const arrowIconImageWidth = 12;
 function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   const [countries, setCountries] = useState([]);
 
+  const [countryName, setCountryName] = useState("");
+  const [givenNames, setGivenNames] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const [areGivenNamesValid, setAreGivenNamesValid] = useState(false);
+  const [isLastNameValid, setIsLastNameValid] = useState(false);
+
   const fetchCountries = useCallback(async () => {
     const response = await fetch(
       `${AppConfiguration.CUSTOMER_SERVICE_URL}/countries`
@@ -57,11 +65,33 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   }, []);
 
   const onPress = useCallback(() => {
+    // console.log(areGivenNamesValid, " ", isLastNameValid);
+
+    // if (!areGivenNamesValid || !isLastNameValid) {
+    //   return;
+    // }
+
     props.onNextPress();
+  }, [areGivenNamesValid, isLastNameValid]);
+
+  const givenNamesValidator = useCallback((text: string): ValidationT => {
+    const validation = containsOnlyLatinCharacters(text);
+
+    setAreGivenNamesValid(validation.passed);
+
+    return validation;
   }, []);
 
-  const [givenNames, setGivenNames] = useState("");
-  const [lastName, setLastName] = useState("");
+  const lastNameValidator = useCallback(
+    (text: string): ValidationT => {
+      const validation = containsOnlyLatinCharacters(text);
+
+      setIsLastNameValid(validation.passed);
+
+      return validation;
+    },
+    [isLastNameValid]
+  );
 
   const titleContainerStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
@@ -108,14 +138,17 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         <Text style={titleTextStyle}>Sign Up</Text>
       </View>
 
-      <CountriesDropdown countries={countries} />
+      <CountriesDropdown
+        countries={countries}
+        onCountryPress={setCountryName}
+      />
 
       <CustomTextInput
         label="GIVEN NAMES"
         onChangeTextProp={(text) => {
           setGivenNames(text);
         }}
-        inputValidator={containsOnlyLatinCharacters}
+        inputValidator={givenNamesValidator}
         textInputProps={{
           textContentType: "name",
           autoCapitalize: "words",
@@ -130,7 +163,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setLastName(text);
         }}
-        inputValidator={containsOnlyLatinCharacters}
+        inputValidator={lastNameValidator}
         textInputProps={{
           textContentType: "name",
           autoCapitalize: "words",
@@ -151,12 +184,35 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 }
 
 function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
-  const onPress = useCallback(() => {
-    props.onNextPress();
-  }, []);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const onPress = useCallback(() => {
+    // if (!isEmailValid || !isPasswordValid) {
+    //   return;
+    // }
+
+    props.onNextPress();
+  }, [isEmailValid, isPasswordValid]);
+
+  const emailValidator = useCallback((text: string): ValidationT => {
+    const validation = isValidEmail(text);
+
+    setIsEmailValid(validation.passed);
+
+    return validation;
+  }, []);
+
+  const passwordValidator = useCallback((text: string): ValidationT => {
+    const validation = isPasswordSecure(text);
+
+    setIsPasswordValid(validation.passed);
+
+    return validation;
+  }, []);
 
   const titleContainerStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
@@ -208,7 +264,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setEmail(text);
         }}
-        inputValidator={isValidEmail}
+        inputValidator={emailValidator}
         textInputProps={{
           textContentType: "emailAddress",
         }}
@@ -222,7 +278,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         onChangeTextProp={(text) => {
           setPassword(text);
         }}
-        inputValidator={isPasswordSecure}
+        inputValidator={passwordValidator}
         textInputProps={{
           textContentType: "password",
         }}

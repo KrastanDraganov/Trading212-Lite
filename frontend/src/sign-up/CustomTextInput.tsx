@@ -7,12 +7,14 @@ import {
   Pressable,
   StyleProp,
   StyleSheet,
+  Text,
   TextInput,
   TextStyle,
   View,
   ViewStyle,
 } from "react-native";
 import { ColorConstants } from "../constants/colors";
+import { ErrorTypeToMessages } from "../constants/messages";
 import { StyleConstants } from "../constants/styles";
 
 const containerHeight = 70;
@@ -33,6 +35,11 @@ const clearInputButtonImageSize = 33;
 const viewPasswordButtonContainerSize = 33;
 const viewPasswordButtonImageSize = 24;
 
+const passwordPromptFontSize = 15;
+
+const passwordRequirementFontSize = 15;
+const passwordRequirementMarginTop = 10;
+
 export function CustomTextInput(props: {
   label: string;
   style?: StyleProp<ViewStyle>;
@@ -43,16 +50,46 @@ export function CustomTextInput(props: {
   const labelAnimationValue = useRef(new Animated.Value(0)).current;
   const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
 
-  const errorAnimationValue = useRef(new Animated.Value(0)).current;
-  const cancelErrorAnimation = useRef<(() => void) | undefined>(undefined);
+  const errorContainerAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorContainerAnimation = useRef<(() => void) | undefined>(
+    undefined
+  );
+
+  const errorCharactersAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorCharactersAnimationValue = useRef<(() => void) | undefined>(
+    undefined
+  );
+
+  const errorDigitAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorDigitAnimationValue = useRef<(() => void) | undefined>(
+    undefined
+  );
+
+  const errorUppercaseAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorUppercaseAnimationValue = useRef<(() => void) | undefined>(
+    undefined
+  );
+
+  const errorLowercaseAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorLowercaseAnimationValue = useRef<(() => void) | undefined>(
+    undefined
+  );
 
   const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorTypes, setErrorTypes] = useState<string[]>([]);
+
+  const [isBlurPerformed, setIsBlurPerformed] = useState(false);
 
   useEffect(() => {
+    setErrorTypes(props.inputValidator(text).errorType!);
+
     return () => {
       cancelLabelAnimation.current?.();
-      cancelErrorAnimation.current?.();
+      cancelErrorContainerAnimation.current?.();
+      cancelErrorCharactersAnimationValue.current?.();
+      cancelErrorDigitAnimationValue.current?.();
+      cancelErrorUppercaseAnimationValue.current?.();
+      cancelErrorLowercaseAnimationValue.current?.();
     };
   }, []);
 
@@ -69,40 +106,44 @@ export function CustomTextInput(props: {
     animation.start();
   }, []);
 
-  const performErrorAnimation = useCallback(() => {
-    setIsError(true);
+  const performErrorAnimation = useCallback(
+    (
+      errorAnimationValue: Animated.Value,
+      cancelErrorAnimation: React.MutableRefObject<(() => void) | undefined>
+    ) => {
+      const animation = Animated.sequence([
+        Animated.timing(errorAnimationValue, {
+          toValue: 10,
+          duration: 100,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(errorAnimationValue, {
+          toValue: -10,
+          duration: 100,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(errorAnimationValue, {
+          toValue: 10,
+          duration: 100,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(errorAnimationValue, {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]);
 
-    const animation = Animated.sequence([
-      Animated.timing(errorAnimationValue, {
-        toValue: 10,
-        duration: 100,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(errorAnimationValue, {
-        toValue: -10,
-        duration: 100,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(errorAnimationValue, {
-        toValue: 10,
-        duration: 100,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(errorAnimationValue, {
-        toValue: 0,
-        duration: 100,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ]);
+      cancelErrorAnimation.current = animation.stop;
 
-    cancelErrorAnimation.current = animation.stop;
-
-    animation.start();
-  }, [isError]);
+      animation.start();
+    },
+    []
+  );
 
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState("");
@@ -121,6 +162,8 @@ export function CustomTextInput(props: {
   }, []);
 
   const onBlur = useCallback(() => {
+    setIsBlurPerformed(true);
+
     setIsFocused(false);
 
     if (text.length === 0) {
@@ -129,11 +172,45 @@ export function CustomTextInput(props: {
 
     const validation = props.inputValidator(text);
 
-    if (!validation.passed) {
-      setErrorMessage(validation.errorType!);
-      performErrorAnimation();
+    if (validation.passed) {
+      return;
     }
-  }, [text, props.inputValidator, isError]);
+
+    setIsError(true);
+
+    performErrorAnimation(
+      errorContainerAnimationValue,
+      cancelErrorContainerAnimation
+    );
+
+    if (errorTypes.includes("not-enough-characters")) {
+      performErrorAnimation(
+        errorCharactersAnimationValue,
+        cancelErrorCharactersAnimationValue
+      );
+    }
+
+    if (errorTypes.includes("missing-digit")) {
+      performErrorAnimation(
+        errorDigitAnimationValue,
+        cancelErrorDigitAnimationValue
+      );
+    }
+
+    if (errorTypes.includes("missing-uppercase-letter")) {
+      performErrorAnimation(
+        errorUppercaseAnimationValue,
+        cancelErrorUppercaseAnimationValue
+      );
+    }
+
+    if (errorTypes.includes("missing-lowercase-letter")) {
+      performErrorAnimation(
+        errorLowercaseAnimationValue,
+        cancelErrorLowercaseAnimationValue
+      );
+    }
+  }, [text, props.inputValidator, isError, errorTypes]);
 
   const onButtonPressIn = useCallback(() => {
     setIsButtonBeingPressed(true);
@@ -149,8 +226,16 @@ export function CustomTextInput(props: {
       setText(newText);
 
       setIsError(false);
+
+      const validation = props.inputValidator(newText);
+
+      if (!validation.passed) {
+        setErrorTypes(validation.errorType!);
+      } else {
+        setErrorTypes([]);
+      }
     },
-    [props.onChangeTextProp, isError]
+    [props.onChangeTextProp, props.inputValidator, isError, errorTypes]
   );
 
   const clearInputText = useCallback(() => {
@@ -168,14 +253,20 @@ export function CustomTextInput(props: {
   }, [isPasswordVisible]);
 
   const wholeContainerStyle = useMemo(
-    (): StyleProp<ViewStyle> | Animated.Animated => [
+    (): StyleProp<ViewStyle> => [
       {
         marginLeft: StyleConstants.MARGIN,
         marginRight: StyleConstants.MARGIN,
-        transform: [{ translateX: errorAnimationValue }],
       },
       props.style,
     ],
+    []
+  );
+
+  const animatedContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> | Animated.Animated => ({
+      transform: [{ translateX: errorContainerAnimationValue }],
+    }),
     []
   );
 
@@ -269,6 +360,28 @@ export function CustomTextInput(props: {
     [isFocused, isError]
   );
 
+  const passwordPromptTextStyle = useMemo(
+    (): StyleProp<TextStyle> | Animated.Animated => ({
+      fontSize: passwordPromptFontSize,
+      color: ColorConstants.BLACK,
+      marginTop: StyleConstants.MARGIN,
+    }),
+    []
+  );
+
+  const passwordRequirementTextStyle = useCallback(
+    (
+      color: string,
+      errorAnimationValue: Animated.Value
+    ): StyleProp<TextStyle> | Animated.Animated => ({
+      fontSize: passwordRequirementFontSize,
+      color: color,
+      marginTop: passwordRequirementMarginTop,
+      transform: [{ translateX: errorAnimationValue }],
+    }),
+    []
+  );
+
   const clearInputButton = useCallback(() => {
     return (
       <View>
@@ -308,29 +421,99 @@ export function CustomTextInput(props: {
     );
   }, [text, isPasswordVisible, isButtonBeingPressed]);
 
-  return (
-    <Animated.View style={wholeContainerStyle}>
-      <View style={textInputAndButtonContainerStyle}>
-        <View style={textInputAndLabelContainerStyle}>
-          <Animated.Text style={labelStyle}>
-            {isError ? errorMessage : props.label}
-          </Animated.Text>
+  const passwordPrompt = useCallback(() => {
+    const colorCharacters = !errorTypes.includes("not-enough-characters")
+      ? ColorConstants.GREEN
+      : isBlurPerformed
+      ? ColorConstants.RED
+      : ColorConstants.GRAY;
 
-          <TextInput
-            {...props.textInputProps}
-            style={textInputStyle}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onChangeText={onChangeText}
-            value={text}
-            secureTextEntry={isTextInputVisible}
-          />
+    const colorDigit = !errorTypes.includes("missing-digit")
+      ? ColorConstants.GREEN
+      : isBlurPerformed
+      ? ColorConstants.RED
+      : ColorConstants.GRAY;
+
+    const colorUppercase = !errorTypes.includes("missing-uppercase-letter")
+      ? ColorConstants.GREEN
+      : isBlurPerformed
+      ? ColorConstants.RED
+      : ColorConstants.GRAY;
+
+    const colorLowercase = !errorTypes.includes("missing-lowercase-letter")
+      ? ColorConstants.GREEN
+      : isBlurPerformed
+      ? ColorConstants.RED
+      : ColorConstants.GRAY;
+
+    return (
+      <View>
+        <Text style={passwordPromptTextStyle}>
+          Your password must contain at least:
+        </Text>
+        <Animated.Text
+          style={passwordRequirementTextStyle(
+            colorCharacters,
+            errorCharactersAnimationValue
+          )}
+        >
+          {"  "}○ 8 characters
+        </Animated.Text>
+        <Animated.Text
+          style={passwordRequirementTextStyle(
+            colorDigit,
+            errorDigitAnimationValue
+          )}
+        >
+          {"  "}○ 1 number
+        </Animated.Text>
+        <Animated.Text
+          style={passwordRequirementTextStyle(
+            colorUppercase,
+            errorUppercaseAnimationValue
+          )}
+        >
+          {"  "}○ 1 uppercase letter
+        </Animated.Text>
+        <Animated.Text
+          style={passwordRequirementTextStyle(
+            colorLowercase,
+            errorLowercaseAnimationValue
+          )}
+        >
+          {"  "}○ 1 lowercase letter
+        </Animated.Text>
+      </View>
+    );
+  }, [errorTypes, isBlurPerformed]);
+
+  return (
+    <View style={wholeContainerStyle}>
+      <Animated.View style={animatedContainerStyle}>
+        <View style={textInputAndButtonContainerStyle}>
+          <View style={textInputAndLabelContainerStyle}>
+            <Animated.Text style={labelStyle}>
+              {isError ? ErrorTypeToMessages.get(errorTypes[0]) : props.label}
+            </Animated.Text>
+
+            <TextInput
+              {...props.textInputProps}
+              style={textInputStyle}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onChangeText={onChangeText}
+              value={text}
+              secureTextEntry={isTextInputVisible}
+            />
+          </View>
+
+          {isPassword.current ? viewPasswordButton() : clearInputButton()}
         </View>
 
-        {isPassword.current ? viewPasswordButton() : clearInputButton()}
-      </View>
+        <View style={indicatorLineStyle} />
+      </Animated.View>
 
-      <View style={indicatorLineStyle} />
-    </Animated.View>
+      {isPassword.current ? passwordPrompt() : null}
+    </View>
   );
 }
