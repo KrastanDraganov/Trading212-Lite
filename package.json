@@ -1,18 +1,19 @@
 {
-  "name": "trading212-lite",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "cd frontend && npx expo start --web"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.21",
-    "prettier": "2.8.4",
-    "prettier-plugin-organize-imports": "^3.2.2"
-  },
-  "workspaces": [
-    "frontend",
-    "customer-service",
-    "customer-commons"
-  ],
-  "private": true
+	"name": "trading212-lite",
+	"version": "1.0.0",
+	"scripts": {
+		"start": "cd frontend && npx expo start --web"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.21",
+		"prettier": "2.8.4",
+		"prettier-plugin-organize-imports": "^3.2.2"
+	},
+	"workspaces": [
+		"frontend",
+		"customer-service",
+		"customer-commons",
+		"instruments-service"
+	],
+	"private": true
 }
