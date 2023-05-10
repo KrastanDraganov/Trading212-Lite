@@ -14,13 +14,13 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { ColorConstants } from "../constants/colors";
-import { StyleConstants } from "../constants/styles";
+import { Colors } from "../constants/colors";
+import { Styles } from "../constants/styles";
 
 const countryChoserContainerMarginBottom = 10;
 
 const labelFontSize = 12;
-const labelFontWeight: "500" = "500";
+const labelFontWeight = "500" as const;
 const labelMarginBottom = 3;
 
 const countriesListMaxHeight = 248;
@@ -33,7 +33,7 @@ const pressableCountryItemOpacity = 1;
 const notPressableCountryItemOpacity = 0.4;
 
 const countryNameFontSize = 15;
-const countryNameFontWeight: "500" = "500";
+const countryNameFontWeight = "500" as const;
 const highlightedCountryNameLeftMargin = 15;
 const countrySupportNoMargin = 0;
 
@@ -41,7 +41,7 @@ const highlightedCountryItemPosition = 5;
 
 const textInputHeight = 25;
 const textInputFontSize = 17;
-const textInputFontWeight: "300" = "300";
+const textInputFontWeight = "300" as const;
 
 const arrowIconHeight = 7;
 const arrowIconWidth = 14;
@@ -51,9 +51,9 @@ export function CountriesDropdown(props: {
   countries: CountryT[];
   onCountryPress: (text: string) => void;
 }) {
-  const dropDownFadeAnimation = useRef(new Animated.Value(0)).current;
+  const dropdownFadeAnimation = useRef(new Animated.Value(0)).current;
 
-  const cancelDropDownFadeAnimation = useRef<(() => void) | undefined>(
+  const cancelDropdownFadeAnimation = useRef<(() => void) | undefined>(
     undefined
   );
 
@@ -64,16 +64,16 @@ export function CountriesDropdown(props: {
 
   useEffect(() => {
     return () => {
-      cancelDropDownFadeAnimation.current?.();
+      cancelDropdownFadeAnimation.current?.();
     };
   }, []);
 
   const wholeContainerStyle = useMemo(
     () => ({
       zIndex: isCountriesListVisible ? 1 : 0,
-      marginLeft: StyleConstants.MARGIN,
-      marginRight: StyleConstants.MARGIN,
-      marginTop: StyleConstants.MARGIN,
+      marginLeft: Styles.margin,
+      marginRight: Styles.margin,
+      marginTop: Styles.margin,
     }),
     [isCountriesListVisible]
   );
@@ -102,7 +102,7 @@ export function CountriesDropdown(props: {
     (): StyleProp<TextStyle> => ({
       fontSize: labelFontSize,
       fontWeight: labelFontWeight,
-      color: ColorConstants.GRAY,
+      color: Colors.gray,
       marginBottom: labelMarginBottom,
     }),
     []
@@ -114,7 +114,7 @@ export function CountriesDropdown(props: {
       fontSize: textInputFontSize,
       fontWeight: textInputFontWeight,
       outlineStyle: "none",
-      color: ColorConstants.BLACK,
+      color: Colors.black,
     }),
     []
   );
@@ -140,9 +140,7 @@ export function CountriesDropdown(props: {
 
   const blackLineStyle = useMemo(
     () => ({
-      backgroundColor: isCountriesListVisible
-        ? ColorConstants.BLUE
-        : ColorConstants.GRAY,
+      backgroundColor: isCountriesListVisible ? Colors.blue : Colors.gray,
       height: StyleSheet.hairlineWidth,
     }),
     [isCountriesListVisible]
@@ -174,8 +172,8 @@ export function CountriesDropdown(props: {
       right: highlightedCountryItemPosition,
       top: highlightedCountryItemPosition,
       bottom: highlightedCountryItemPosition,
-      backgroundColor: ColorConstants.HIGHLIGHTED_ITEM,
-      borderRadius: StyleConstants.BORDER_RADIUS,
+      backgroundColor: Colors.highlightedItem,
+      borderRadius: Styles.borderRadius,
       justifyContent: "center",
     }),
     []
@@ -188,8 +186,8 @@ export function CountriesDropdown(props: {
       left: countriesListLeftPosition,
       right: countriesListRightPosition,
       top: countriesListTopPosition,
-      opacity: dropDownFadeAnimation,
-      borderRadius: StyleConstants.BORDER_RADIUS,
+      opacity: dropdownFadeAnimation,
+      borderRadius: Styles.borderRadius,
       backgroundColor: "white",
     }),
     []
@@ -202,13 +200,13 @@ export function CountriesDropdown(props: {
 
     setIsCountriesListVisisble(isVisible);
 
-    const animation = Animated.timing(dropDownFadeAnimation, {
+    const animation = Animated.timing(dropdownFadeAnimation, {
       toValue: isVisible ? 1 : 0,
       duration: 300,
       useNativeDriver: true,
     });
 
-    cancelDropDownFadeAnimation.current = animation.stop;
+    cancelDropdownFadeAnimation.current = animation.stop;
 
     animation.start();
   }, []);
@@ -245,27 +243,18 @@ export function CountriesDropdown(props: {
     (countryName: string, countrySupport: string) => {
       const userMessageSupport =
         countrySupport === "coming-soon" ? (
-          <Text
-            style={countryNameStyle(
-              ColorConstants.GREEN,
-              countrySupportNoMargin
-            )}
-          >
+          <Text style={countryNameStyle(Colors.green, countrySupportNoMargin)}>
             (Coming Soon)
           </Text>
         ) : (
-          <Text
-            style={countryNameStyle(ColorConstants.RED, countrySupportNoMargin)}
-          >
+          <Text style={countryNameStyle(Colors.red, countrySupportNoMargin)}>
             (Not Supported)
           </Text>
         );
 
       return (
         <View style={countryItemStyle(notPressableCountryItemOpacity)}>
-          <Text
-            style={countryNameStyle(ColorConstants.GRAY, StyleConstants.MARGIN)}
-          >
+          <Text style={countryNameStyle(Colors.gray, Styles.margin)}>
             {countryName} {userMessageSupport}
           </Text>
         </View>
@@ -286,7 +275,7 @@ export function CountriesDropdown(props: {
           <View style={highlightedCountryItemStyle}>
             <Text
               style={countryNameStyle(
-                ColorConstants.BLUE,
+                Colors.blue,
                 highlightedCountryNameLeftMargin
               )}
             >
@@ -297,7 +286,7 @@ export function CountriesDropdown(props: {
           <View style={highlightedCountryItemStyle}>
             <Text
               style={countryNameStyle(
-                ColorConstants.BLACK,
+                Colors.black,
                 highlightedCountryNameLeftMargin
               )}
             >
@@ -305,9 +294,7 @@ export function CountriesDropdown(props: {
             </Text>
           </View>
         ) : (
-          <Text
-            style={countryNameStyle(ColorConstants.GRAY, StyleConstants.MARGIN)}
-          >
+          <Text style={countryNameStyle(Colors.gray, Styles.margin)}>
             {countryName}
           </Text>
         )}

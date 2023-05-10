@@ -1,11 +1,11 @@
-export class ColorConstants {
-  static readonly GRAY = "#747980";
-  static readonly WHITE = "#FFFFFF";
-  static readonly BLUE = "#00A7E1";
-  static readonly BLACK = "#000000";
-  static readonly RED = "#FA6464";
-  static readonly GREEN = "#1BC47D";
-  static readonly PAGE_BACKGROUND = "#ECEDF1";
-  static readonly HIGHLIGHTED_ITEM = "#F4F4F6";
-  static readonly ICON = "#DADBE2";
+export class Colors {
+  static readonly gray = "#747980";
+  static readonly white = "#FFFFFF";
+  static readonly blue = "#00A7E1";
+  static readonly black = "#000000";
+  static readonly red = "#FA6464";
+  static readonly green = "#1BC47D";
+  static readonly pageBackground = "#ECEDF1";
+  static readonly highlightedItem = "#F4F4F6";
+  static readonly icon = "#DADBE2";
 }

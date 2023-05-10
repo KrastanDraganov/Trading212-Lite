@@ -84,14 +84,14 @@ app.post("/customers", async (req: Request, res: Response) => {
 		return res.status(400).json({ type: "EmailAlreadyInUse" });
 	}
 
-	const countryCode: string | undefined = req.body.countryCode;
+	const countryName: string | undefined = req.body.countryName;
 
-	if (!countryCode) {
-		return res.status(400).json({ type: "MissingCountryCode" });
+	if (!countryName) {
+		return res.status(400).json({ type: "MissingCountryName" });
 	}
 
 	const country: CountryT | undefined = Countries.find(
-		(item) => item.code === countryCode
+		(item) => item.name === countryName
 	);
 
 	if (!country) {
@@ -120,11 +120,11 @@ app.post("/customers", async (req: Request, res: Response) => {
 
 	const newCustomer = await CustomersFileRepository.add({
 		id: customerID,
-		givenName: givenNames,
-		lastName: lastName,
-		email: email,
+		givenNames,
+		lastName,
+		email,
 		password: hashedPassword,
-		countryCode: countryCode,
+		countryName,
 	});
 
 	req.session.isAuthenticated = true;
@@ -132,7 +132,7 @@ app.post("/customers", async (req: Request, res: Response) => {
 	res.json({
 		id: newCustomer.id,
 		email: newCustomer.email,
-		countryCode: newCustomer.countryCode,
+		countryName: newCustomer.countryName,
 	});
 });
 
@@ -174,7 +174,7 @@ app.post("/login", async (req: Request, res: Response) => {
 	res.json({
 		id: customer.id,
 		email: customer.email,
-		countryCode: customer.countryCode,
+		countryName: customer.countryName,
 	});
 });
 

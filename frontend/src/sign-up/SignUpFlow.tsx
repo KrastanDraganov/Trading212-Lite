@@ -15,25 +15,25 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { CustomButton } from "../components/CustomButton";
+import { EpicButton } from "../components/EpicButton";
 import { AppConfiguration } from "../config";
-import { ColorConstants } from "../constants/colors";
-import { StyleConstants } from "../constants/styles";
+import { Colors } from "../constants/colors";
+import { Styles } from "../constants/styles";
 import { CountriesDropdown } from "./CountriesDropdown";
-import { CustomTextInput } from "./CustomTextInput";
+import { EpicTextInput } from "./EpicTextInput";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 
 const whiteContainerWidth = 390;
 
 const titleFontSize = 32;
-const titleFontWeight: "400" = "400";
+const titleFontWeight = "400" as const;
 const titleMarginBottom = 30;
 
 const marginAboveTextInput = 10;
 
 const buttonNextHeight = 60;
 const buttonNextLabelFontSize = 19;
-const buttonNextLabelWeight: "400" = "400";
+const buttonNextLabelWeight = "400" as const;
 
 const buttonPreviousSize = 32;
 
@@ -52,7 +52,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 
   const fetchCountries = useCallback(async () => {
     const response = await fetch(
-      `${AppConfiguration.CUSTOMER_SERVICE_URL}/countries`
+      `${AppConfiguration.customerServiceUrl}/countries`
     );
 
     const countries = await response.json();
@@ -105,7 +105,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
     (): StyleProp<TextStyle> => ({
       fontSize: titleFontSize,
       fontWeight: titleFontWeight,
-      color: ColorConstants.BLACK,
+      color: Colors.black,
       marginBottom: titleMarginBottom,
     }),
     []
@@ -115,7 +115,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
     (): StyleProp<TextStyle> => ({
       fontSize: buttonNextLabelFontSize,
       fontWeight: buttonNextLabelWeight,
-      color: ColorConstants.WHITE,
+      color: Colors.white,
     }),
     []
   );
@@ -123,11 +123,11 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   const buttonNextContainerStyle = useMemo(
     () => ({
       height: buttonNextHeight,
-      borderRadius: StyleConstants.BORDER_RADIUS,
-      backgroundColor: ColorConstants.BLUE,
-      marginLeft: StyleConstants.MARGIN,
-      marginRight: StyleConstants.MARGIN,
-      marginBottom: StyleConstants.MARGIN,
+      borderRadius: Styles.borderRadius,
+      backgroundColor: Colors.blue,
+      marginLeft: Styles.margin,
+      marginRight: Styles.margin,
+      marginBottom: Styles.margin,
     }),
     []
   );
@@ -143,7 +143,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         onCountryPress={setCountryName}
       />
 
-      <CustomTextInput
+      <EpicTextInput
         label="GIVEN NAMES"
         onChangeTextProp={(text) => {
           setGivenNames(text);
@@ -158,7 +158,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
         }}
       />
 
-      <CustomTextInput
+      <EpicTextInput
         label="LAST NAME"
         onChangeTextProp={(text) => {
           setLastName(text);
@@ -169,11 +169,11 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
           autoCapitalize: "words",
         }}
         style={{
-          marginBottom: StyleConstants.MARGIN,
+          marginBottom: Styles.margin,
         }}
       />
 
-      <CustomButton
+      <EpicButton
         onPress={onPress}
         labelText="Next"
         labelStyle={buttonNextLabelStyle}
@@ -226,8 +226,8 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
     (): StyleProp<TextStyle> => ({
       fontSize: titleFontSize,
       fontWeight: titleFontWeight,
-      color: ColorConstants.BLACK,
-      marginBottom: StyleConstants.MARGIN,
+      color: Colors.black,
+      marginBottom: Styles.margin,
     }),
     []
   );
@@ -236,7 +236,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
     (): StyleProp<TextStyle> => ({
       fontSize: buttonNextLabelFontSize,
       fontWeight: buttonNextLabelWeight,
-      color: ColorConstants.WHITE,
+      color: Colors.white,
     }),
     []
   );
@@ -244,11 +244,11 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
   const buttonNextContainerStyle = useMemo(
     () => ({
       height: buttonNextHeight,
-      borderRadius: StyleConstants.BORDER_RADIUS,
-      backgroundColor: ColorConstants.BLUE,
-      marginLeft: StyleConstants.MARGIN,
-      marginRight: StyleConstants.MARGIN,
-      marginBottom: StyleConstants.MARGIN,
+      borderRadius: Styles.borderRadius,
+      backgroundColor: Colors.blue,
+      marginLeft: Styles.margin,
+      marginRight: Styles.margin,
+      marginBottom: Styles.margin,
     }),
     []
   );
@@ -259,7 +259,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         <Text style={titleTextStyle}>Login details</Text>
       </View>
 
-      <CustomTextInput
+      <EpicTextInput
         label="EMAIL"
         onChangeTextProp={(text) => {
           setEmail(text);
@@ -273,7 +273,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
         }}
       />
 
-      <CustomTextInput
+      <EpicTextInput
         label="ENTER PASSWORD"
         onChangeTextProp={(text) => {
           setPassword(text);
@@ -283,11 +283,11 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
           textContentType: "password",
         }}
         style={{
-          marginBottom: StyleConstants.MARGIN,
+          marginBottom: Styles.margin,
         }}
       />
 
-      <CustomButton
+      <EpicButton
         onPress={onPress}
         labelText="Sign up"
         labelStyle={buttonNextLabelStyle}
@@ -304,8 +304,8 @@ export function SignUpFlow() {
     (): StyleProp<ViewStyle> => ({
       height: buttonPreviousSize,
       width: buttonPreviousSize,
-      marginTop: StyleConstants.MARGIN,
-      marginLeft: StyleConstants.MARGIN,
+      marginTop: Styles.margin,
+      marginLeft: Styles.margin,
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center",
@@ -342,9 +342,9 @@ export function SignUpFlow() {
 
   const whiteContainerStyle = useMemo(
     (): StyleProp<ViewStyle> | Animated.Animated => ({
-      backgroundColor: ColorConstants.WHITE,
+      backgroundColor: Colors.white,
       width: whiteContainerWidth,
-      borderRadius: StyleConstants.BORDER_RADIUS,
+      borderRadius: Styles.borderRadius,
       justifyContent: "center",
     }),
     []

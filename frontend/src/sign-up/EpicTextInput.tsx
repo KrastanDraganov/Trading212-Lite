@@ -13,18 +13,18 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { ColorConstants } from "../constants/colors";
+import { Colors } from "../constants/colors";
 import { ErrorTypeToMessages } from "../constants/messages";
-import { StyleConstants } from "../constants/styles";
+import { Styles } from "../constants/styles";
 
 const containerHeight = 70;
 
 const textInputHeight = 45;
 const textInputFontSize = 17;
-const textInputFontWeight: "300" = "300";
+const textInputFontWeight = "300" as const;
 
 const labelFontSize = 12;
-const labelFontWeight = "500";
+const labelFontWeight = "500" as const;
 const labelFocusedMargin = -5;
 const labelBlurredMargin = -20;
 const labelAnimationBottomToTop = 1;
@@ -40,12 +40,12 @@ const passwordPromptFontSize = 15;
 const passwordRequirementFontSize = 15;
 const passwordRequirementMarginTop = 10;
 
-export function CustomTextInput(props: {
+export function EpicTextInput(props: {
   label: string;
-  style?: StyleProp<ViewStyle>;
-  textInputProps?: Omit<React.ComponentProps<typeof TextInput>, "onChangeText">;
   onChangeTextProp: (text: string) => void;
   inputValidator: (text: string) => ValidationT;
+  style?: StyleProp<ViewStyle>;
+  textInputProps?: Omit<React.ComponentProps<typeof TextInput>, "onChangeText">;
 }) {
   const labelAnimationValue = useRef(new Animated.Value(0)).current;
   const cancelLabelAnimation = useRef<(() => void) | undefined>(undefined);
@@ -255,8 +255,8 @@ export function CustomTextInput(props: {
   const wholeContainerStyle = useMemo(
     (): StyleProp<ViewStyle> => [
       {
-        marginLeft: StyleConstants.MARGIN,
-        marginRight: StyleConstants.MARGIN,
+        marginLeft: Styles.margin,
+        marginRight: Styles.margin,
       },
       props.style,
     ],
@@ -295,7 +295,7 @@ export function CustomTextInput(props: {
       outlineStyle: "none",
       fontSize: textInputFontSize,
       fontWeight: textInputFontWeight,
-      color: ColorConstants.BLACK,
+      color: Colors.black,
     }),
     []
   );
@@ -311,7 +311,7 @@ export function CustomTextInput(props: {
         inputRange: [0, 1],
         outputRange: [labelBlurredMargin, labelFocusedMargin],
       }),
-      color: isError ? ColorConstants.RED : ColorConstants.GRAY,
+      color: isError ? Colors.red : Colors.gray,
       fontSize: labelFontSize,
       fontWeight: labelFontWeight,
     }),
@@ -322,7 +322,7 @@ export function CustomTextInput(props: {
     () => ({
       height: clearInputButtonImageSize,
       width: clearInputButtonImageSize,
-      tintColor: ColorConstants.ICON,
+      tintColor: Colors.icon,
       opacity: isButtonBeingPressed ? 0.5 : 1,
     }),
     [isButtonBeingPressed]
@@ -342,7 +342,7 @@ export function CustomTextInput(props: {
     () => ({
       height: viewPasswordButtonImageSize,
       width: viewPasswordButtonImageSize,
-      tintColor: isPasswordVisible ? ColorConstants.BLUE : ColorConstants.ICON,
+      tintColor: isPasswordVisible ? Colors.blue : Colors.icon,
       opacity: isButtonBeingPressed ? 0.5 : 1,
     }),
     [isPasswordVisible, isButtonBeingPressed]
@@ -351,10 +351,10 @@ export function CustomTextInput(props: {
   const indicatorLineStyle = useMemo(
     () => ({
       backgroundColor: isFocused
-        ? ColorConstants.BLUE
+        ? Colors.blue
         : isError
-        ? ColorConstants.RED
-        : ColorConstants.GRAY,
+        ? Colors.red
+        : Colors.gray,
       height: StyleSheet.hairlineWidth,
     }),
     [isFocused, isError]
@@ -363,8 +363,8 @@ export function CustomTextInput(props: {
   const passwordPromptTextStyle = useMemo(
     (): StyleProp<TextStyle> | Animated.Animated => ({
       fontSize: passwordPromptFontSize,
-      color: ColorConstants.BLACK,
-      marginTop: StyleConstants.MARGIN,
+      color: Colors.black,
+      marginTop: Styles.margin,
     }),
     []
   );
@@ -423,28 +423,28 @@ export function CustomTextInput(props: {
 
   const passwordPrompt = useCallback(() => {
     const colorCharacters = !errorTypes.includes("not-enough-characters")
-      ? ColorConstants.GREEN
+      ? Colors.green
       : isBlurPerformed
-      ? ColorConstants.RED
-      : ColorConstants.GRAY;
+      ? Colors.red
+      : Colors.gray;
 
     const colorDigit = !errorTypes.includes("missing-digit")
-      ? ColorConstants.GREEN
+      ? Colors.green
       : isBlurPerformed
-      ? ColorConstants.RED
-      : ColorConstants.GRAY;
+      ? Colors.red
+      : Colors.gray;
 
     const colorUppercase = !errorTypes.includes("missing-uppercase-letter")
-      ? ColorConstants.GREEN
+      ? Colors.green
       : isBlurPerformed
-      ? ColorConstants.RED
-      : ColorConstants.GRAY;
+      ? Colors.red
+      : Colors.gray;
 
     const colorLowercase = !errorTypes.includes("missing-lowercase-letter")
-      ? ColorConstants.GREEN
+      ? Colors.green
       : isBlurPerformed
-      ? ColorConstants.RED
-      : ColorConstants.GRAY;
+      ? Colors.red
+      : Colors.gray;
 
     return (
       <View>

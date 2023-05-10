@@ -4,7 +4,7 @@ export type CustomerT = {
 	email: string;
 	password: string;
 
-	givenName: string;
+	givenNames: string;
 	lastName: string;
-	countryCode: string;
+	countryName: string;
 };

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Image, StyleProp, View, ViewStyle } from "react-native";
-import { ColorConstants } from "./constants/colors";
+import { Colors } from "./constants/colors";
 import { SignUpFlow } from "./sign-up/SignUpFlow";
 
 const logoWidth = 167;
@@ -13,7 +13,7 @@ export default function App() {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: ColorConstants.PAGE_BACKGROUND,
+      backgroundColor: Colors.pageBackground,
     }),
     []
   );

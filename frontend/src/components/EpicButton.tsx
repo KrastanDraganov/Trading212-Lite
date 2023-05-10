@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Pressable, StyleProp, Text, TextStyle, ViewStyle } from "react-native";
 
-export function CustomButton(props: {
+export function EpicButton(props: {
   onPress: () => void;
   labelText: string;
   labelStyle: StyleProp<TextStyle>;
@@ -12,7 +12,7 @@ export function CustomButton(props: {
 
   const onPress = useCallback(() => {
     props.onPress();
-  }, []);
+  }, [props.onPress]);
 
   const onHoverIn = useCallback(() => {
     setIsHovered(true);
@@ -30,7 +30,10 @@ export function CustomButton(props: {
     setIsBeingPressed(false);
   }, []);
 
-  const labelStyle = useMemo((): StyleProp<TextStyle> => props.labelStyle, []);
+  const labelStyle = useMemo(
+    (): StyleProp<TextStyle> => props.labelStyle,
+    [props.labelStyle]
+  );
 
   const containerStyle = useMemo(
     (): StyleProp<ViewStyle> => [
@@ -41,7 +44,7 @@ export function CustomButton(props: {
       },
       props.containerStyle,
     ],
-    [isHovered, isButtonBeingPressed]
+    [isHovered, isButtonBeingPressed, props.containerStyle]
   );
 
   return (
