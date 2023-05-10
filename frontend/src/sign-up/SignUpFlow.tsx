@@ -65,22 +65,23 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   }, []);
 
   const onPress = useCallback(() => {
-    // console.log(areGivenNamesValid, " ", isLastNameValid);
-
-    // if (!areGivenNamesValid || !isLastNameValid) {
-    //   return;
-    // }
+    if (!areGivenNamesValid || !isLastNameValid) {
+      return;
+    }
 
     props.onNextPress();
   }, [areGivenNamesValid, isLastNameValid]);
 
-  const givenNamesValidator = useCallback((text: string): ValidationT => {
-    const validation = containsOnlyLatinCharacters(text);
+  const givenNamesValidator = useCallback(
+    (text: string): ValidationT => {
+      const validation = containsOnlyLatinCharacters(text);
 
-    setAreGivenNamesValid(validation.passed);
+      setAreGivenNamesValid(validation.passed);
 
-    return validation;
-  }, []);
+      return validation;
+    },
+    [areGivenNamesValid]
+  );
 
   const lastNameValidator = useCallback(
     (text: string): ValidationT => {
@@ -191,28 +192,34 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   const onPress = useCallback(() => {
-    // if (!isEmailValid || !isPasswordValid) {
-    //   return;
-    // }
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
 
     props.onNextPress();
   }, [isEmailValid, isPasswordValid]);
 
-  const emailValidator = useCallback((text: string): ValidationT => {
-    const validation = isValidEmail(text);
+  const emailValidator = useCallback(
+    (text: string): ValidationT => {
+      const validation = isValidEmail(text);
 
-    setIsEmailValid(validation.passed);
+      setIsEmailValid(validation.passed);
 
-    return validation;
-  }, []);
+      return validation;
+    },
+    [isEmailValid]
+  );
 
-  const passwordValidator = useCallback((text: string): ValidationT => {
-    const validation = isPasswordSecure(text);
+  const passwordValidator = useCallback(
+    (text: string): ValidationT => {
+      const validation = isPasswordSecure(text);
 
-    setIsPasswordValid(validation.passed);
+      setIsPasswordValid(validation.passed);
 
-    return validation;
-  }, []);
+      return validation;
+    },
+    [isPasswordValid]
+  );
 
   const titleContainerStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
