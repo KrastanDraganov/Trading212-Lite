@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Image, StyleProp, View, ViewStyle } from "react-native";
 import { Colors } from "./constants/colors";
 import { SignUpFlow } from "./sign-up/SignUpFlow";
+import { SignUpFlowContextProvider } from "./sign-up/SignUpFlowContext";
 
 const logoWidth = 167;
 const logoHeight = 50;
@@ -33,7 +34,10 @@ export default function App() {
         style={logoStyle}
         source={require("../assets/images/trading212_logo.png")}
       />
-      <SignUpFlow />
+
+      <SignUpFlowContextProvider>
+        <SignUpFlow />
+      </SignUpFlowContextProvider>
     </View>
   );
 }

@@ -2,9 +2,16 @@ import {
   containsOnlyLatinCharacters,
   isPasswordSecure,
   isValidEmail,
+  SignUpRequestPayloadT,
   ValidationT,
 } from "customer-commons";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Animated,
   Image,
@@ -21,6 +28,7 @@ import { Colors } from "../constants/colors";
 import { Styles } from "../constants/styles";
 import { CountriesDropdown } from "./CountriesDropdown";
 import { EpicTextInput } from "./EpicTextInput";
+import { SignUpFlowContext } from "./SignUpFlowContext";
 import { SignUpFlowConfiguration } from "./SignUpFlowType";
 
 const whiteContainerWidth = 390;
@@ -47,8 +55,14 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   const [givenNames, setGivenNames] = useState("");
   const [lastName, setLastName] = useState("");
 
+  const [initialCountryName, setInitialCountryName] = useState("");
+  const [initialGivenNames, setInitialGivenNames] = useState("");
+  const [initialLastName, setInitialLastName] = useState("");
+
   const [areGivenNamesValid, setAreGivenNamesValid] = useState(false);
   const [isLastNameValid, setIsLastNameValid] = useState(false);
+
+  const [userData, setUserData] = useContext(SignUpFlowContext);
 
   const fetchCountries = useCallback(async () => {
     const response = await fetch(
@@ -60,17 +74,48 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
     setCountries(countries);
   }, []);
 
+  const loadAvailableUserData = useCallback(() => {
+    if (userData.countryName) {
+      setCountryName(userData.countryName);
+      setInitialCountryName(userData.countryName);
+    }
+
+    if (userData.givenNames) {
+      setGivenNames(userData.givenNames);
+      setInitialGivenNames(userData.givenNames);
+    }
+
+    if (userData.lastName) {
+      setLastName(userData.lastName);
+      setInitialLastName(userData.lastName);
+    }
+  }, []);
+
   useEffect(() => {
     fetchCountries();
+    loadAvailableUserData();
   }, []);
 
   const onPress = useCallback(() => {
-    if (!areGivenNamesValid || !isLastNameValid) {
+    if (countryName.length === 0 || !areGivenNamesValid || !isLastNameValid) {
       return;
     }
 
+    setUserData({
+      countryName,
+      givenNames,
+      lastName,
+    });
+
     props.onNextPress();
-  }, [areGivenNamesValid, isLastNameValid]);
+  }, [
+    areGivenNamesValid,
+    isLastNameValid,
+    countryName,
+    givenNames,
+    lastName,
+    props.onNextPress,
+  ]);
 
   const givenNamesValidator = useCallback(
     (text: string): ValidationT => {
@@ -146,6 +191,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 
       <EpicTextInput
         label="GIVEN NAMES"
+        initialInput={initialGivenNames}
         onChangeTextProp={(text) => {
           setGivenNames(text);
         }}
@@ -161,6 +207,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 
       <EpicTextInput
         label="LAST NAME"
+        initialInput={initialLastName}
         onChangeTextProp={(text) => {
           setLastName(text);
         }}
@@ -184,20 +231,33 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
   );
 }
 
-function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
+function SignUpFlowStepLoginDetails(props: {
+  onSubmit: (email: string, password: string) => void;
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [initialEmail, setInitialEmail] = useState("");
+
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const [userData, setUserData] = useContext(SignUpFlowContext);
+
+  useEffect(() => {
+    if (userData.email) {
+      setEmail(userData.email);
+      setInitialEmail(userData.email);
+    }
+  }, []);
 
   const onPress = useCallback(() => {
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
 
-    props.onNextPress();
-  }, [isEmailValid, isPasswordValid]);
+    props.onSubmit(email, password);
+  }, [email, password, isEmailValid, isPasswordValid, props.onSubmit]);
 
   const emailValidator = useCallback(
     (text: string): ValidationT => {
@@ -268,6 +328,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
 
       <EpicTextInput
         label="EMAIL"
+        initialInput={initialEmail}
         onChangeTextProp={(text) => {
           setEmail(text);
         }}
@@ -282,6 +343,7 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
 
       <EpicTextInput
         label="ENTER PASSWORD"
+        initialInput=""
         onChangeTextProp={(text) => {
           setPassword(text);
         }}
@@ -306,6 +368,8 @@ function SignUpFlowStepLoginDetails(props: { onNextPress: () => void }) {
 
 export function SignUpFlow() {
   const [currentStep, setCurrentStep] = useState(0);
+
+  const [userData, _] = useContext(SignUpFlowContext);
 
   const buttonPreviousContainerStyle = useMemo(
     (): StyleProp<ViewStyle> => ({
@@ -337,15 +401,45 @@ export function SignUpFlow() {
   }, [currentStep]);
 
   const onNextPress = useCallback(() => {
-    const nextStep: number = currentStep + 1;
-
-    if (nextStep >= SignUpFlowConfiguration.maxSteps) {
-      // TO DO - After Last Step
-      return;
-    }
-
-    setCurrentStep(nextStep);
+    setCurrentStep(currentStep + 1);
   }, [currentStep]);
+
+  const onSubmit = useCallback(
+    async (email: string, password: string) => {
+      const countryName = userData.countryName;
+      const givenNames = userData.givenNames;
+      const lastName = userData.lastName;
+
+      if (!countryName || !givenNames || !lastName) {
+        return;
+      }
+
+      const signUpPayload: SignUpRequestPayloadT = {
+        countryName,
+        givenNames,
+        lastName,
+        email,
+        password,
+      };
+
+      const signUpResponse = await fetch(
+        `${AppConfiguration.customerServiceUrl}/customers`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(signUpPayload),
+        }
+      );
+
+      const signUpResponseBody = await signUpResponse.json();
+
+      console.log(signUpResponseBody);
+    },
+    [userData]
+  );
 
   const whiteContainerStyle = useMemo(
     (): StyleProp<ViewStyle> | Animated.Animated => ({
@@ -371,7 +465,7 @@ export function SignUpFlow() {
       ) : null}
 
       {currentStep === SignUpFlowConfiguration.loginDetailsStep ? (
-        <SignUpFlowStepLoginDetails onNextPress={onNextPress} />
+        <SignUpFlowStepLoginDetails onSubmit={onSubmit} />
       ) : null}
 
       {currentStep >= SignUpFlowConfiguration.maxSteps ? (
