@@ -186,6 +186,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 
       <CountriesDropdown
         countries={countries}
+        initialCountry={initialCountryName}
         onCountryPress={setCountryName}
       />
 

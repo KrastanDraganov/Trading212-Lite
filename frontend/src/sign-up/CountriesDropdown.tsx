@@ -49,6 +49,7 @@ const arrowIconButtonOffset = 20;
 
 export function CountriesDropdown(props: {
   countries: CountryT[];
+  initialCountry: string;
   onCountryPress: (text: string) => void;
 }) {
   const dropdownFadeAnimation = useRef(new Animated.Value(0)).current;
@@ -63,10 +64,14 @@ export function CountriesDropdown(props: {
   const [hoveredCountry, setHoveredCountry] = useState("");
 
   useEffect(() => {
+    if (props.initialCountry.length > 0) {
+      setSelectedCountry(props.initialCountry);
+    }
+
     return () => {
       cancelDropdownFadeAnimation.current?.();
     };
-  }, []);
+  }, [props.initialCountry]);
 
   const wholeContainerStyle = useMemo(
     () => ({
@@ -327,7 +332,7 @@ export function CountriesDropdown(props: {
         value={isCountriesListVisible ? queryText : selectedCountry}
       />
     ),
-    [isCountriesListVisible, queryText]
+    [isCountriesListVisible, queryText, selectedCountry]
   );
 
   const maybeRenderList = useCallback(
