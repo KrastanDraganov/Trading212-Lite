@@ -48,7 +48,10 @@ const buttonPreviousSize = 32;
 const arrowIconImageHeight = 22;
 const arrowIconImageWidth = 12;
 
-function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
+function SignUpFlowStepCustomerDetails(props: {
+  onPreviousPress: () => void;
+  onNextPress: () => void;
+}) {
   const [countries, setCountries] = useState([]);
 
   const [countryName, setCountryName] = useState("");
@@ -96,15 +99,24 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
     loadAvailableUserData();
   }, []);
 
-  const onPress = useCallback(() => {
+  const onPreviousPress = useCallback(() => {
+    setUserData({});
+
+    props.onPreviousPress();
+  }, [props.onPreviousPress]);
+
+  const onNextPress = useCallback(() => {
     if (countryName.length === 0 || !areGivenNamesValid || !isLastNameValid) {
       return;
     }
+
+    console.log(userData);
 
     setUserData({
       countryName,
       givenNames,
       lastName,
+      email: userData.email,
     });
 
     props.onNextPress();
@@ -115,6 +127,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
     givenNames,
     lastName,
     props.onNextPress,
+    userData,
   ]);
 
   const givenNamesValidator = useCallback(
@@ -137,6 +150,24 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
       return validation;
     },
     [isLastNameValid]
+  );
+
+  const buttonPreviousContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> => ({
+      height: buttonPreviousSize,
+      width: buttonPreviousSize,
+      marginTop: Styles.margin,
+      marginLeft: Styles.margin,
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center",
+    }),
+    []
+  );
+
+  const arrowIconImageStyle = useMemo(
+    () => ({ height: arrowIconImageHeight, width: arrowIconImageWidth }),
+    []
   );
 
   const titleContainerStyle = useMemo(
@@ -180,6 +211,13 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 
   return (
     <View>
+      <Pressable onPress={onPreviousPress} style={buttonPreviousContainerStyle}>
+        <Image
+          style={arrowIconImageStyle}
+          source={require("../../assets/images/arrow_left.png")}
+        />
+      </Pressable>
+
       <View style={titleContainerStyle}>
         <Text style={titleTextStyle}>Sign Up</Text>
       </View>
@@ -223,7 +261,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
       />
 
       <EpicButton
-        onPress={onPress}
+        onPress={onNextPress}
         labelText="Next"
         labelStyle={buttonNextLabelStyle}
         containerStyle={buttonNextContainerStyle}
@@ -233,6 +271,7 @@ function SignUpFlowStepCustomerDetails(props: { onNextPress: () => void }) {
 }
 
 function SignUpFlowStepLoginDetails(props: {
+  onPreviousPress: () => void;
   onSubmit: (email: string, password: string) => void;
 }) {
   const [email, setEmail] = useState("");
@@ -252,7 +291,18 @@ function SignUpFlowStepLoginDetails(props: {
     }
   }, []);
 
-  const onPress = useCallback(() => {
+  const onPreviousPress = useCallback(() => {
+    setUserData({
+      countryName: userData.countryName,
+      givenNames: userData.givenNames,
+      lastName: userData.lastName,
+      email,
+    });
+
+    props.onPreviousPress();
+  }, [email, props.onPreviousPress]);
+
+  const onSubmit = useCallback(() => {
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
@@ -280,6 +330,24 @@ function SignUpFlowStepLoginDetails(props: {
       return validation;
     },
     [isPasswordValid]
+  );
+
+  const buttonPreviousContainerStyle = useMemo(
+    (): StyleProp<ViewStyle> => ({
+      height: buttonPreviousSize,
+      width: buttonPreviousSize,
+      marginTop: Styles.margin,
+      marginLeft: Styles.margin,
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center",
+    }),
+    []
+  );
+
+  const arrowIconImageStyle = useMemo(
+    () => ({ height: arrowIconImageHeight, width: arrowIconImageWidth }),
+    []
   );
 
   const titleContainerStyle = useMemo(
@@ -323,6 +391,13 @@ function SignUpFlowStepLoginDetails(props: {
 
   return (
     <View>
+      <Pressable onPress={onPreviousPress} style={buttonPreviousContainerStyle}>
+        <Image
+          style={arrowIconImageStyle}
+          source={require("../../assets/images/arrow_left.png")}
+        />
+      </Pressable>
+
       <View style={titleContainerStyle}>
         <Text style={titleTextStyle}>Login details</Text>
       </View>
@@ -358,7 +433,7 @@ function SignUpFlowStepLoginDetails(props: {
       />
 
       <EpicButton
-        onPress={onPress}
+        onPress={onSubmit}
         labelText="Sign up"
         labelStyle={buttonNextLabelStyle}
         containerStyle={buttonNextContainerStyle}
@@ -371,24 +446,6 @@ export function SignUpFlow() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [userData, _] = useContext(SignUpFlowContext);
-
-  const buttonPreviousContainerStyle = useMemo(
-    (): StyleProp<ViewStyle> => ({
-      height: buttonPreviousSize,
-      width: buttonPreviousSize,
-      marginTop: Styles.margin,
-      marginLeft: Styles.margin,
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-    }),
-    []
-  );
-
-  const arrowIconImageStyle = useMemo(
-    () => ({ height: arrowIconImageHeight, width: arrowIconImageWidth }),
-    []
-  );
 
   const onPreviousPress = useCallback(() => {
     const nextStep: number = currentStep - 1;
@@ -454,19 +511,18 @@ export function SignUpFlow() {
 
   return (
     <View style={whiteContainerStyle}>
-      <Pressable onPress={onPreviousPress} style={buttonPreviousContainerStyle}>
-        <Image
-          style={arrowIconImageStyle}
-          source={require("../../assets/images/arrow_left.png")}
-        />
-      </Pressable>
-
       {currentStep === SignUpFlowConfiguration.customerDetailsStep ? (
-        <SignUpFlowStepCustomerDetails onNextPress={onNextPress} />
+        <SignUpFlowStepCustomerDetails
+          onPreviousPress={onPreviousPress}
+          onNextPress={onNextPress}
+        />
       ) : null}
 
       {currentStep === SignUpFlowConfiguration.loginDetailsStep ? (
-        <SignUpFlowStepLoginDetails onSubmit={onSubmit} />
+        <SignUpFlowStepLoginDetails
+          onPreviousPress={onPreviousPress}
+          onSubmit={onSubmit}
+        />
       ) : null}
 
       {currentStep >= SignUpFlowConfiguration.maxSteps ? (
