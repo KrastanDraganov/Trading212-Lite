@@ -233,6 +233,7 @@ function SignUpFlowStepCustomerDetails(props: {
         countries={countries}
         initialCountry={initialCountryName}
         onCountryPress={setCountryName}
+        errorCheckerButtonPressedFlag={nextButtonPressedFlag}
       />
 
       <EpicTextInput

@@ -2,6 +2,7 @@ import { CountryT } from "customer-commons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
+  Easing,
   FlatList,
   Image,
   ListRenderItemInfo,
@@ -51,30 +52,91 @@ export function CountriesDropdown(props: {
   countries: CountryT[];
   initialCountry: string;
   onCountryPress: (text: string) => void;
+  errorCheckerButtonPressedFlag: number;
 }) {
   const dropdownFadeAnimation = useRef(new Animated.Value(0)).current;
-
   const cancelDropdownFadeAnimation = useRef<(() => void) | undefined>(
     undefined
   );
 
+  const errorContainerAnimationValue = useRef(new Animated.Value(0)).current;
+  const cancelErrorContainerAnimation = useRef<(() => void) | undefined>(
+    undefined
+  );
+
   const [isCountriesListVisible, setIsCountriesListVisisble] = useState(false);
+
   const [queryText, setQueryText] = useState("");
+
   const [selectedCountry, setSelectedCountry] = useState("Select country");
   const [hoveredCountry, setHoveredCountry] = useState("");
+
+  const [isError, setIsError] = useState(false);
+
+  const performErrorAnimation = useCallback(() => {
+    const animation = Animated.sequence([
+      Animated.timing(errorContainerAnimationValue, {
+        toValue: 10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorContainerAnimationValue, {
+        toValue: -10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorContainerAnimationValue, {
+        toValue: 10,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(errorContainerAnimationValue, {
+        toValue: 0,
+        duration: 100,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    cancelErrorContainerAnimation.current = animation.stop;
+
+    animation.start();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      cancelDropdownFadeAnimation.current?.();
+      cancelErrorContainerAnimation.current?.();
+    };
+  }, []);
 
   useEffect(() => {
     if (props.initialCountry.length > 0) {
       setSelectedCountry(props.initialCountry);
     }
-
-    return () => {
-      cancelDropdownFadeAnimation.current?.();
-    };
   }, [props.initialCountry]);
 
+  useEffect(() => {
+    const isFirstMount = props.errorCheckerButtonPressedFlag === 0;
+
+    if (isFirstMount) {
+      return;
+    }
+
+    const countryNotChosen = selectedCountry === "Select country";
+
+    if (countryNotChosen) {
+      setIsError(true);
+      performErrorAnimation();
+    }
+  }, [selectedCountry, props.errorCheckerButtonPressedFlag]);
+
   const wholeContainerStyle = useMemo(
-    () => ({
+    (): StyleProp<ViewStyle> | Animated.Animated => ({
+      transform: [{ translateX: errorContainerAnimationValue }],
       zIndex: isCountriesListVisible ? 1 : 0,
       marginLeft: Styles.margin,
       marginRight: Styles.margin,
@@ -107,10 +169,10 @@ export function CountriesDropdown(props: {
     (): StyleProp<TextStyle> => ({
       fontSize: labelFontSize,
       fontWeight: labelFontWeight,
-      color: Colors.gray,
+      color: !isCountriesListVisible && isError ? Colors.red : Colors.gray,
       marginBottom: labelMarginBottom,
     }),
-    []
+    [isError, isCountriesListVisible]
   );
 
   const textInputStyle = useMemo(
@@ -143,12 +205,16 @@ export function CountriesDropdown(props: {
     []
   );
 
-  const blackLineStyle = useMemo(
+  const indicatorLineStyle = useMemo(
     () => ({
-      backgroundColor: isCountriesListVisible ? Colors.blue : Colors.gray,
+      backgroundColor: isCountriesListVisible
+        ? Colors.blue
+        : isError
+        ? Colors.red
+        : Colors.gray,
       height: StyleSheet.hairlineWidth,
     }),
-    [isCountriesListVisible]
+    [isCountriesListVisible, isError]
   );
 
   const countryItemStyle = useCallback(
@@ -236,6 +302,8 @@ export function CountriesDropdown(props: {
       props.onCountryPress(countryName);
 
       changeCountriesListVisibility(false);
+
+      setIsError(false);
     },
     [props.onCountryPress]
   );
@@ -352,7 +420,7 @@ export function CountriesDropdown(props: {
   );
 
   return (
-    <View style={wholeContainerStyle}>
+    <Animated.View style={wholeContainerStyle}>
       <View style={countryChoserContainerStyle}>
         <View style={labelAndTextInputContainerStyle}>
           <Text style={labelStyle}>COUNTRY OF RESIDENCE</Text>
@@ -368,9 +436,9 @@ export function CountriesDropdown(props: {
         </Pressable>
       </View>
 
-      <View style={blackLineStyle} />
+      <View style={indicatorLineStyle} />
 
       {maybeRenderList()}
-    </View>
+    </Animated.View>
   );
 }
