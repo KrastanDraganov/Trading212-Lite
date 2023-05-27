@@ -43,6 +43,7 @@ const passwordRequirementMarginTop = 10;
 export function EpicTextInput(props: {
   label: string;
   initialInput: string;
+  errorCheckerButtonPressedFlag: number;
   onChangeTextProp: (text: string) => void;
   inputValidator: (text: string) => ValidationT;
   style?: StyleProp<ViewStyle>;
@@ -108,24 +109,6 @@ export function EpicTextInput(props: {
     []
   );
 
-  useEffect(() => {
-    if (props.initialInput.length > 0) {
-      setText(props.initialInput);
-      performLabelAnimation(labelAnimationBottomToTop, 0);
-    }
-
-    setErrorTypes(props.inputValidator(props.initialInput).errorType!);
-
-    return () => {
-      cancelLabelAnimation.current?.();
-      cancelErrorContainerAnimation.current?.();
-      cancelErrorCharactersAnimationValue.current?.();
-      cancelErrorDigitAnimationValue.current?.();
-      cancelErrorUppercaseAnimationValue.current?.();
-      cancelErrorLowercaseAnimationValue.current?.();
-    };
-  }, [props.initialInput]);
-
   const performErrorAnimation = useCallback(
     (
       errorAnimationValue: Animated.Value,
@@ -165,26 +148,7 @@ export function EpicTextInput(props: {
     []
   );
 
-  const onFocus = useCallback(() => {
-    setIsFocused(true);
-    performLabelAnimation(labelAnimationBottomToTop, 100);
-  }, []);
-
-  const onBlur = useCallback(() => {
-    setIsBlurPerformed(true);
-
-    setIsFocused(false);
-
-    if (text.length === 0) {
-      performLabelAnimation(labelAnimationTopToBottom, 100);
-    }
-
-    const validation = props.inputValidator(text);
-
-    if (validation.passed) {
-      return;
-    }
-
+  const executeAllErrorAnimations = useCallback(() => {
     setIsError(true);
 
     performErrorAnimation(
@@ -219,6 +183,63 @@ export function EpicTextInput(props: {
         cancelErrorLowercaseAnimationValue
       );
     }
+  }, [errorTypes]);
+
+  useEffect(() => {
+    return () => {
+      cancelLabelAnimation.current?.();
+      cancelErrorContainerAnimation.current?.();
+      cancelErrorCharactersAnimationValue.current?.();
+      cancelErrorDigitAnimationValue.current?.();
+      cancelErrorUppercaseAnimationValue.current?.();
+      cancelErrorLowercaseAnimationValue.current?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (props.initialInput.length > 0) {
+      setText(props.initialInput);
+      performLabelAnimation(labelAnimationBottomToTop, 0);
+    }
+
+    setErrorTypes(props.inputValidator(props.initialInput).errorType!);
+  }, [props.initialInput]);
+
+  useEffect(() => {
+    const isFirstMount = props.errorCheckerButtonPressedFlag === 0;
+
+    if (isFirstMount) {
+      return;
+    }
+
+    setIsBlurPerformed(true);
+
+    if (isError || text.length === 0) {
+      executeAllErrorAnimations();
+    }
+  }, [text, isError, props.errorCheckerButtonPressedFlag]);
+
+  const onFocus = useCallback(() => {
+    setIsFocused(true);
+    performLabelAnimation(labelAnimationBottomToTop, 100);
+  }, []);
+
+  const onBlur = useCallback(() => {
+    setIsBlurPerformed(true);
+
+    setIsFocused(false);
+
+    if (text.length === 0) {
+      performLabelAnimation(labelAnimationTopToBottom, 100);
+    }
+
+    const validation = props.inputValidator(text);
+
+    if (validation.passed) {
+      return;
+    }
+
+    executeAllErrorAnimations();
   }, [text, props.inputValidator, isError, errorTypes]);
 
   const onButtonPressIn = useCallback(() => {
@@ -251,11 +272,12 @@ export function EpicTextInput(props: {
     props.onChangeTextProp("");
     setText("");
 
+    setIsError(false);
+    setErrorTypes(props.inputValidator("").errorType!);
+
     setIsFocused(false);
     performLabelAnimation(labelAnimationTopToBottom, 100);
-
-    setIsError(false);
-  }, [props.onChangeTextProp]);
+  }, [props.onChangeTextProp, props.inputValidator]);
 
   const changePasswordVisibility = useCallback(() => {
     setIsPasswordVisible(!isPasswordVisible);

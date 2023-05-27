@@ -67,6 +67,8 @@ function SignUpFlowStepCustomerDetails(props: {
 
   const [userData, setUserData] = useContext(SignUpFlowContext);
 
+  const [nextButtonPressedFlag, setNextButtonPressedFlag] = useState(0);
+
   const fetchCountries = useCallback(async () => {
     const response = await fetch(
       `${AppConfiguration.customerServiceUrl}/countries`
@@ -106,6 +108,10 @@ function SignUpFlowStepCustomerDetails(props: {
   }, [props.onPreviousPress]);
 
   const onNextPress = useCallback(() => {
+    const nextButtonPressedFlagNewValue =
+      nextButtonPressedFlag === 2 ? 1 : nextButtonPressedFlag + 1;
+    setNextButtonPressedFlag(nextButtonPressedFlagNewValue);
+
     if (countryName.length === 0 || !areGivenNamesValid || !isLastNameValid) {
       return;
     }
@@ -128,6 +134,7 @@ function SignUpFlowStepCustomerDetails(props: {
     lastName,
     props.onNextPress,
     userData,
+    nextButtonPressedFlag,
   ]);
 
   const givenNamesValidator = useCallback(
@@ -231,6 +238,7 @@ function SignUpFlowStepCustomerDetails(props: {
       <EpicTextInput
         label="GIVEN NAMES"
         initialInput={initialGivenNames}
+        errorCheckerButtonPressedFlag={nextButtonPressedFlag}
         onChangeTextProp={(text) => {
           setGivenNames(text);
         }}
@@ -247,6 +255,7 @@ function SignUpFlowStepCustomerDetails(props: {
       <EpicTextInput
         label="LAST NAME"
         initialInput={initialLastName}
+        errorCheckerButtonPressedFlag={nextButtonPressedFlag}
         onChangeTextProp={(text) => {
           setLastName(text);
         }}
@@ -284,6 +293,8 @@ function SignUpFlowStepLoginDetails(props: {
 
   const [userData, setUserData] = useContext(SignUpFlowContext);
 
+  const [submitButtonPressedFlag, setSubmitButtonPressedFlag] = useState(0);
+
   useEffect(() => {
     if (userData.email) {
       setEmail(userData.email);
@@ -303,12 +314,23 @@ function SignUpFlowStepLoginDetails(props: {
   }, [email, props.onPreviousPress]);
 
   const onSubmit = useCallback(() => {
+    const submitButtonPressedFlagNewValue =
+      submitButtonPressedFlag === 2 ? 1 : submitButtonPressedFlag + 1;
+    setSubmitButtonPressedFlag(submitButtonPressedFlagNewValue);
+
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
 
     props.onSubmit(email, password);
-  }, [email, password, isEmailValid, isPasswordValid, props.onSubmit]);
+  }, [
+    email,
+    password,
+    isEmailValid,
+    isPasswordValid,
+    props.onSubmit,
+    submitButtonPressedFlag,
+  ]);
 
   const emailValidator = useCallback(
     (text: string): ValidationT => {
@@ -405,6 +427,7 @@ function SignUpFlowStepLoginDetails(props: {
       <EpicTextInput
         label="EMAIL"
         initialInput={initialEmail}
+        errorCheckerButtonPressedFlag={submitButtonPressedFlag}
         onChangeTextProp={(text) => {
           setEmail(text);
         }}
@@ -420,6 +443,7 @@ function SignUpFlowStepLoginDetails(props: {
       <EpicTextInput
         label="ENTER PASSWORD"
         initialInput=""
+        errorCheckerButtonPressedFlag={submitButtonPressedFlag}
         onChangeTextProp={(text) => {
           setPassword(text);
         }}
